@@ -3,7 +3,8 @@
 {% block content %}
     <article>
         <h2 class="mark">{% now "Y-m-d H:i" %}</em></h2>
-        <a href="{% url 'entry-create' %}"><button>Add new entry</button></a>
+        <a href="{% url 'entry-create' %}"><button>Build your own workout</button></a>
+        <a href="{% url 'entry-workout' %}"><button>Choose a premade workout</button></a>
     </article>
     {% for entry in entry_list %}
         <article>

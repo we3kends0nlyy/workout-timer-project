@@ -14,6 +14,11 @@ urlpatterns = [
         name="entry-detail"
     ),
     path(
+        "workout",
+        views.premade_workout.as_view(),
+        name="entry-workout"
+    ),
+    path(
         "create",
         views.EntryCreateView.as_view(),
         name="entry-create"

@@ -24,6 +24,13 @@ class EntryDetailView(LockedView, DetailView):
     model = Entry
 
 
+class premade_workout(LockedView, SuccessMessageMixin, CreateView):
+    model = Entry
+    fields = ["content"]
+    success_url = reverse_lazy("entry-list")
+    success_message = "Your new workout was created!"
+
+
 class EntryCreateView(LockedView, SuccessMessageMixin, CreateView):
     model = Entry
     fields = ["title", "content"]
