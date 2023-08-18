@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
+from django.shortcuts import render
 from django.views.generic import (
     ListView,
     DetailView,
@@ -15,6 +16,7 @@ from .models import Entry
 class LockedView(LoginRequiredMixin):
     login_url = "admin:login"
 
+
 class EntryListView(LockedView, ListView):
     model = Entry
     queryset = Entry.objects.all().order_by("-date_created")
@@ -24,11 +26,13 @@ class EntryDetailView(LockedView, DetailView):
     model = Entry
 
 
-class premade_workout(LockedView, SuccessMessageMixin, CreateView):
+class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView, ListView):
     model = Entry
-    fields = ["content"]
+    queryset = Entry.objects.all().order_by("-date_created")
+    template_name = 'buildworkout/buildworkout.html'
+    fields = ["title"]
     success_url = reverse_lazy("entry-list")
-    success_message = "Your new workout was created!"
+    success_message = "Your new entry was created!"
 
 
 class EntryCreateView(LockedView, SuccessMessageMixin, CreateView):

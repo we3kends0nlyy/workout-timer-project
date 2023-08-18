@@ -14,9 +14,9 @@ urlpatterns = [
         name="entry-detail"
     ),
     path(
-        "workout",
-        views.premade_workout.as_view(),
-        name="entry-workout"
+        "buildworkout",
+        views.BuildWorkoutCreateView.as_view(),
+        name="buildworkout"
     ),
     path(
         "create",
