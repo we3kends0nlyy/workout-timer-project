@@ -10,8 +10,24 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
 )
-
+from django import forms
 from .models import Entry
+
+
+class EntryForm(forms.ModelForm):
+    class Meta:
+        model = Entry
+        fields = ["title", "content"]
+        
+        labels = {
+            "title": "Exercise/Activity",
+            "content": "Time",
+        }
+        
+        help_texts = {
+            "title": "Enter your exercise or break activity here.",
+            "content": "Enter a custom content description here.",
+        }
 
 class LockedView(LoginRequiredMixin):
     login_url = "admin:login"
@@ -26,11 +42,10 @@ class EntryDetailView(LockedView, DetailView):
     model = Entry
 
 
-class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView, ListView):
+class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView):
     model = Entry
-    queryset = Entry.objects.all().order_by("-date_created")
+    form_class = EntryForm
     template_name = 'buildworkout/buildworkout.html'
-    fields = ["title"]
     success_url = reverse_lazy("entry-list")
     success_message = "Your new entry was created!"
 

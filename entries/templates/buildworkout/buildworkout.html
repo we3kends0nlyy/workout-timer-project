@@ -1,21 +1,18 @@
 {% extends "entries/base.html" %}
-
 {% block content %}
-    <article>
-        <h2 class="mark">{% now "Y-m-d H:i" %}</em></h2>
-        <a href="{% url 'buildworkout' %}"><button>Build your own workout</button></a>
-        <a href="{% url 'entry-list' %}"><button>Choose a premade workout</button></a>
-    </article>
-    {% for entry in entry_list %}
-        <article>
-            <h2 class="{{ entry.date_created|date:'l' }}">
-                {{ entry.date_created|date:'Y-m-d H:i' }}
-            </h2>
-            <h3>
-                <a href="{% url 'entry-detail' entry.id %}">
-                    {{ entry.title }}
-                </a>
-            </h3>
-        </article>
-    {% endfor %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Save">
+    </form>
+    {% if entry %}
+        <a href="{% url 'entry-detail' entry.id %}">
+            <button>Cancel</button>
+        </a>
+    {% else %}
+        <a href="{% url 'entry-list' %}">
+            <button>Cancel</button>
+        </a>
+    {% endif %}
+    
 {% endblock %}
