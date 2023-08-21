@@ -4,6 +4,11 @@ from . import views
 
 urlpatterns = [
     path(
+        "dropdown",
+        views.DropdownMenu.as_view(),
+        name="dropdown"
+    ),
+    path(
         "",
         views.EntryListView.as_view(),
         name="entry-list"

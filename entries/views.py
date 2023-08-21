@@ -11,7 +11,14 @@ from django.views.generic import (
     DeleteView,
 )
 from django import forms
-from .models import Entry
+from .models import Entry, Time
+
+class DropdownMenu(ListView):
+    template_name = 'buildworkout/dropdown.html'
+    def get(self, request, *args, **kwargs):
+        results = Time.objects.all()
+        context = {"showseconds": results}
+        return render(request, self.template_name, context)
 
 
 class EntryForm(forms.ModelForm):
@@ -28,6 +35,7 @@ class EntryForm(forms.ModelForm):
             "title": "Enter your exercise or break activity here.",
             "content": "Enter a custom content description here.",
         }
+
 
 class LockedView(LoginRequiredMixin):
     login_url = "admin:login"

@@ -1,0 +1,11 @@
+{% extends 'entries/base.html' %}
+ 
+{% block content %}
+  <p><b>Seconds : </b> 
+         <select name="seconds" class="form-control">
+   {% for results in showseconds %}
+            <option value="{{ results.seconds}}">{{ results.seconds}}</option>
+   {% endfor %}
+         </select>
+</p>  
+{% endblock %}

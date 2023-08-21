@@ -11,3 +11,13 @@ class Entry(models.Model):
 
     class Meta:
         verbose_name_plural = "Entries"
+
+
+class Time(models.Model):
+    seconds = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.seconds
+
+    class Meta:
+        verbose_name_plural = "Times"
