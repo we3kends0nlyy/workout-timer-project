@@ -1,11 +1,22 @@
-{% extends 'entries/base.html' %}
- 
+{% extends "entries/base.html" %}
 {% block content %}
-  <p><b>Seconds : </b> 
-         <select name="seconds" class="form-control">
-   {% for results in showseconds %}
-            <option value="{{ results.seconds}}">{{ results.seconds}}</option>
+    <form method="get">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Save">
+    </form>
+    <p><b>Seconds : </b> 
+        <select name="seconds" class="form-control">
+  {% for results in showseconds %}
+           <option value="{{ results.seconds}}">{{ results.seconds}}</option>
+  {% endfor %}
+        </select>
+</p>  
+<p><b>Minutes : </b> 
+       <select name="minutes" class="form-control">
+   {% for results in showminutes %}
+       <option value="{{ results.minutes}}">{{ results.minutes}}</option>
    {% endfor %}
-         </select>
+       </select>
 </p>  
 {% endblock %}

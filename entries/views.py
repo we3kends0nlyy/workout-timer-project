@@ -13,14 +13,6 @@ from django.views.generic import (
 from django import forms
 from .models import Entry, Time
 
-class DropdownMenu(ListView):
-    template_name = 'buildworkout/dropdown.html'
-    def get(self, request, *args, **kwargs):
-        results = Time.objects.all()
-        context = {"showseconds": results}
-        return render(request, self.template_name, context)
-
-
 class EntryForm(forms.ModelForm):
     class Meta:
         model = Entry
@@ -41,6 +33,28 @@ class LockedView(LoginRequiredMixin):
     login_url = "admin:login"
 
 
+class DropdownMenu(LockedView, SuccessMessageMixin, CreateView):
+    model = Time
+    template_name = 'buildworkout/dropdown.html'
+    fields = ["seconds"]
+    success_url = reverse_lazy("entry-list")
+    success_message = "Your workout was created!"
+
+    def get(self, request, *args, **kwargs):
+        results = Time.objects.all()
+        context = {"showseconds": results, "showminutes": results}
+        return render(request, self.template_name, context)
+
+
+class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView):
+    model = Entry
+    form_class = EntryForm
+    template_name = 'buildworkout/buildworkout.html'
+    success_url = reverse_lazy("dropdown")
+    success_message = "Your new entry was created!"
+
+
+
 class EntryListView(LockedView, ListView):
     model = Entry
     queryset = Entry.objects.all().order_by("-date_created")
@@ -49,13 +63,6 @@ class EntryListView(LockedView, ListView):
 class EntryDetailView(LockedView, DetailView):
     model = Entry
 
-
-class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView):
-    model = Entry
-    form_class = EntryForm
-    template_name = 'buildworkout/buildworkout.html'
-    success_url = reverse_lazy("entry-list")
-    success_message = "Your new entry was created!"
 
 
 class EntryCreateView(LockedView, SuccessMessageMixin, CreateView):

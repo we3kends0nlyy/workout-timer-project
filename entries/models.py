@@ -15,9 +15,22 @@ class Entry(models.Model):
 
 class Time(models.Model):
     seconds = models.CharField(max_length=30)
+    minutes = models.CharField(max_length=30)
 
     def __str__(self):
         return self.seconds
 
     class Meta:
         verbose_name_plural = "Times"
+
+
+class Workouts(models.Model):
+    workout = models.CharField(max_length=200)
+    seconds = models.CharField(max_length=30)
+    minutes = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.workout
+
+    class Meta:
+        verbose_name_plural = "Workouts"
