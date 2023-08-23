@@ -14,6 +14,7 @@ from django.views.generic import (
 from django import forms
 from .forms import DropdownMenuForm
 from .models import Entry, Time, Workouts
+import sqlite3
 
 class EntryForm(forms.ModelForm):
     class Meta:
@@ -49,10 +50,19 @@ class DropdownMenu(View):
         if form.is_valid():
             selected_option_seconds = form.cleaned_data['seconds']
             selected_option_minutes = form.cleaned_data['minutes']
-            
+            workout = "Pushup"
+            connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None)
+            cursor = connection.execute('PRAGMA foreign_keys = ON;')
+            connection.commit()
+            cursor.close()
+            cursor2 = connection.execute('INSERT INTO entries_workouts (workout, seconds, minutes) VALUES (:workout, :selected_option_seconds, :selected_option_minutes);', {'workout': workout, 'selected_option_seconds': selected_option_seconds, 'selected_option_minutes': selected_option_minutes})
+            connection.commit()
+
 
             return redirect('entry-list')  # Redirect to the desired URL
         return render(request, self.template_name, {'form': form})
+    
+
 
 
 class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView):
