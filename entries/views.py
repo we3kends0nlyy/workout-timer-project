@@ -49,7 +49,7 @@ class DropdownMenu(View):
         if form.is_valid():
             selected_option_seconds = form.cleaned_data['seconds']
             selected_option_minutes = form.cleaned_data['minutes']
-            print(selected_option_seconds, selected_option_minutes)
+            
 
             return redirect('entry-list')  # Redirect to the desired URL
         return render(request, self.template_name, {'form': form})
