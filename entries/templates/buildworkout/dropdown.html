@@ -1,22 +1,11 @@
-{% extends "entries/base.html" %}
+{% extends 'entries/base.html' %}
 {% block content %}
-    <form method="get">
+    <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <input type="submit" value="Save">
+        <button type="submit">Submit</button>
     </form>
-    <p><b>Seconds : </b> 
-        <select name="seconds" class="form-control">
-  {% for results in showseconds %}
-           <option value="{{ results.seconds}}">{{ results.seconds}}</option>
-  {% endfor %}
-        </select>
-</p>  
-<p><b>Minutes : </b> 
-       <select name="minutes" class="form-control">
-   {% for results in showminutes %}
-       <option value="{{ results.minutes}}">{{ results.minutes}}</option>
-   {% endfor %}
-       </select>
-</p>  
+    {% if selected_option %}
+        <p>You selected: {{ selected_option }}</p>
+    {% endif %}
 {% endblock %}

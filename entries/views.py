@@ -2,16 +2,18 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import (
     ListView,
     DetailView,
     CreateView,
     UpdateView,
     DeleteView,
+    View
 )
 from django import forms
-from .models import Entry, Time
+from .forms import DropdownMenuForm
+from .models import Entry, Time, Workouts
 
 class EntryForm(forms.ModelForm):
     class Meta:
@@ -33,17 +35,24 @@ class LockedView(LoginRequiredMixin):
     login_url = "admin:login"
 
 
-class DropdownMenu(LockedView, SuccessMessageMixin, CreateView):
-    model = Time
+class DropdownMenu(View):
     template_name = 'buildworkout/dropdown.html'
-    fields = ["seconds"]
-    success_url = reverse_lazy("entry-list")
-    success_message = "Your workout was created!"
+    model = Workouts
 
     def get(self, request, *args, **kwargs):
-        results = Time.objects.all()
-        context = {"showseconds": results, "showminutes": results}
-        return render(request, self.template_name, context)
+        form = DropdownMenuForm()  # Initialize the form
+
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = DropdownMenuForm(request.POST)
+        if form.is_valid():
+            selected_option_seconds = form.cleaned_data['seconds']
+            selected_option_minutes = form.cleaned_data['minutes']
+            print(selected_option_seconds, selected_option_minutes)
+
+            return redirect('entry-list')  # Redirect to the desired URL
+        return render(request, self.template_name, {'form': form})
 
 
 class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView):
