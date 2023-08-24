@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 
 class Entry(models.Model):
-    title = models.CharField(max_length=200)
+    workout = models.CharField(max_length=200)
     order_in_workout = models.CharField(max_length=100)
     date_created = models.DateTimeField(default=timezone.now)
 
