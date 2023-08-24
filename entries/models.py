@@ -3,7 +3,7 @@ from django.utils import timezone
 
 class Entry(models.Model):
     title = models.CharField(max_length=200)
-    content = models.CharField(max_length=200)
+    order_in_workout = models.CharField(max_length=100)
     date_created = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
@@ -26,6 +26,7 @@ class Time(models.Model):
 
 class Workouts(models.Model):
     workout = models.CharField(max_length=200)
+    order_in_workout = models.CharField(max_length=200)
     seconds = models.CharField(max_length=30)
     minutes = models.CharField(max_length=30)
 

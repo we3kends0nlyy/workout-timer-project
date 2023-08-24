@@ -4,13 +4,13 @@
     <article>
         <h2 class="mark">{% now "Y-m-d H:i" %}</em></h2>
         <a href="{% url 'buildworkout' %}"><button>Add your own exercise</button></a>
-        <a href="{% url 'entry-list' %}"><button>Choose a premade workout</button></a>
+        <a href="{% url 'workout-home' %}"><button>Choose a premade workout</button></a>
     </article>
-    {% for entry in entry_list %}
+    {% for workout in workout_list %}
         <article>
             <h3>
                 <a href="{% url 'entry-detail' entry.id %}">
-                    {{ entry.title }}
+                    {{ workout.workout }}
                 </a>
             </h3>
         </article>

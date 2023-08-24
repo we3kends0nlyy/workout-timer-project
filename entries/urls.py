@@ -9,6 +9,11 @@ urlpatterns = [
         name="dropdown"
     ),
     path(
+        "workout-home",
+        views.WorkoutListView.as_view(),
+        name="workout-home"
+    ),
+    path(
         "",
         views.EntryListView.as_view(),
         name="entry-list"
