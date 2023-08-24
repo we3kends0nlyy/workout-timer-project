@@ -15,22 +15,22 @@ from django.views.generic import (
 
 from django import forms
 from .forms import DropdownMenuForm
-from .models import Entry, Time, Workouts
+from .models import Entry
 import sqlite3
 
 class EntryForm(forms.ModelForm):
     class Meta:
         model = Entry
-        fields = ["title", "order_in_workout"]
+        fields = ["workout", "order_in_workout"]
         
         labels = {
-            "title": "Exercise/Activity",
+            "workout": "Exercise/Activity",
             "order_in_workout": "Order in workout",
         }
         
         help_texts = {
-            "title": "Enter your exercise or break activity here.",
-            "order_in_workout": "Enter the order in the workout you want this exercise to be.",
+            "workout": "Enter your exercise or break activity here.",
+            "order_in_workout": "Enter the order in the workout you want this exercise to be.\nFor example if your workout so far is: 1. Push ups 2. Squats 3. Crunches, you can put  ",
         }
 
 
@@ -41,7 +41,7 @@ class LockedView(LoginRequiredMixin):
 class DropdownMenu(View):
 
     template_name = 'buildworkout/dropdown.html'
-    model = Workouts
+    model = Entry
 
     def get(self, request, *args, **kwargs):
         form = DropdownMenuForm()  # Initialize the form
@@ -57,9 +57,10 @@ class DropdownMenu(View):
             cursor = connection.execute('PRAGMA foreign_keys = ON;')
             connection.commit()
             cursor.close()
-            workout = connection.execute('SELECT title FROM entries_entry ORDER BY id DESC LIMIT 1;')
-            order_in_workout = connection.execute('SELECT order_in_workout FROM entries_entry ORDER BY id DESC LIMIT 1;')
-            cursor2 = connection.execute('INSERT INTO entries_workouts (workout, order_in_workout, seconds, minutes) VALUES (:workout, :order_in_workout, :selected_option_seconds, :selected_option_minutes);', {'workout': workout.fetchone()[0], 'order_in_workout': order_in_workout.fetchone()[0], 'selected_option_seconds': selected_option_seconds, 'selected_option_minutes': selected_option_minutes})
+            workout = connection.execute('SELECT workout FROM entries_entry ORDER BY id DESC LIMIT 1;')
+            workout_type = workout.fetchone()[0]
+            connection.execute('UPDATE entries_entry SET seconds = :seconds WHERE workout = :workout;', {'seconds': selected_option_seconds, 'workout': workout_type})
+            connection.execute('UPDATE entries_entry SET minutes = :minutes WHERE workout = :workout;', {'minutes': selected_option_minutes, 'workout': workout_type})
             connection.commit()
 
 
@@ -77,7 +78,7 @@ class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView):
     success_message = "Your new entry was created!"
     
     def form_valid(self, form):
-        workout = form.cleaned_data['title']
+        workout = form.cleaned_data['workout']
         return super().form_valid(form)
 
 
@@ -85,10 +86,6 @@ class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView):
 class EntryListView(LockedView, ListView):
     model = Entry
     queryset = Entry.objects.all()
-
-class WorkoutListView(LockedView, ListView):
-    model = Workouts
-    queryset = Workouts.objects.all().order_by("-order_in_workout")
 
 
 class EntryDetailView(LockedView, DetailView):
@@ -98,14 +95,14 @@ class EntryDetailView(LockedView, DetailView):
 
 class EntryCreateView(LockedView, SuccessMessageMixin, CreateView):
     model = Entry
-    fields = ["title", "content"]
+    fields = ["workout", "order_in_workout"]
     success_url = reverse_lazy("entry-list")
     success_message = "Your new entry was created!"
 
 
 class EntryUpdateView(LockedView, SuccessMessageMixin, UpdateView):
     model = Entry
-    fields = ["title", "content"]
+    fields = ["workout", "order_in_workout"]
     success_message = "Your entry was updated!"
 
     def get_success_url(self):

@@ -3,7 +3,7 @@
     <form method="post">{% csrf_token %}
         <p>
             Are you sure you want to delete
-            <em>"{{ entry.title }}"</em>
+            <em>"{{ entry.workout }}"</em>
             created on {{ entry.date_created|date:'Y-m-d' }}?
         </p>
         <input type="submit" value="Confirm">
