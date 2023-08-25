@@ -7,29 +7,21 @@
      </article>
      {% for entry in entry_list %}
          <article>
-             <h2 class="{{ entry.date_created|date:'l' }}">
-                 {{ entry.date_created|date:'Y-m-d H:i' }}
-             </h2>
              <h3>
-                <a href="{% url 'entry-detail' entry.id %}">
+                <a href="{% url 'entryorder-detail' entry.id %}">
                     {{ entry.order_in_workout }}
                 </a>
            </h3>
-             <h3>
-                 <a href="{% url 'entry-detail' entry.id %}">
-                     {{ entry.workout }}
-                 </a>
+                <h3>
+                    <a href="{% url 'entry-detail' entry.id %}">
+                        {{ entry.exercise }}
+                    </a>
+                </h3>
+                <h3>
+                    <a href="{% url 'entry-detail' entry.id %}">
+                        {{ entry.seconds }} {{ entry.minutes }}
+                    </a>
             </h3>
-            <h3>
-                <a href="{% url 'entry-detail' entry.id %}">
-                    {{ entry.seconds }}
-                </a>
-           </h3>
-           <h3>
-            <a href="{% url 'entry-detail' entry.id %}">
-                {{ entry.minutes }}
-            </a>
-       </h3>
         </article>
     {% endfor %}
 {% endblock %}

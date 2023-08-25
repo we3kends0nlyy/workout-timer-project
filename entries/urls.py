@@ -19,6 +19,11 @@ urlpatterns = [
         name="entry-detail"
     ),
     path(
+        "entryorder-detail/<int:pk>",
+        views.EntryOrderDetailView.as_view(),
+        name="entryorder-detail"
+    ),
+    path(
         "buildworkout",
         views.BuildWorkoutCreateView.as_view(),
         name="buildworkout"
@@ -32,6 +37,11 @@ urlpatterns = [
         "entry/<int:pk>/update",
         views.EntryUpdateView.as_view(),
         name="entry-update",
+    ),
+    path(
+        "entry/<int:pk>/update2",
+        views.EntryUpdateView2.as_view(),
+        name="entry-update2",
     ),
     path(
         "entry/<int:pk>/delete",

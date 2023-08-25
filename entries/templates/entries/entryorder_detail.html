@@ -2,11 +2,11 @@
 
 {% block content %}
     <article>
-        <h3>{{ "EXERCISE: " }}{{ entry.exercise }}</h3>
+        <h3>{{ "ORDER OF EXERCISE IN THE WORKOUT: " }}{{ entry.order_in_workout }}</h3>
     </article>
     
 	<p>
-	    <a href="{% url 'entry-update' entry.id %}">✍️ Edit</a>
+	    <a href="{% url 'entry-update2' entry.id %}">✍️ Edit</a>
 	    <a href="{% url 'entry-delete' entry.id %}">⛔ Delete</a>
 	</p>
 {% endblock %}

@@ -18,18 +18,20 @@ from .forms import DropdownMenuForm
 from .models import Entry
 import sqlite3
 
+
+
 class EntryForm(forms.ModelForm):
     class Meta:
         model = Entry
-        fields = ["workout", "order_in_workout"]
+        fields = ["exercise", "order_in_workout"]
         
         labels = {
-            "workout": "Exercise/Activity",
+            "exercise": "Exercise/Activity",
             "order_in_workout": "Order in workout",
         }
         
         help_texts = {
-            "workout": "Enter your exercise or break activity here.",
+            "exercise": "Enter your exercise or break activity here.",
             "order_in_workout": "Enter the order in the workout you want this exercise to be.\nFor example if your workout so far is: 1. Push ups 2. Squats 3. Crunches, you can put  ",
         }
 
@@ -57,10 +59,10 @@ class DropdownMenu(View):
             cursor = connection.execute('PRAGMA foreign_keys = ON;')
             connection.commit()
             cursor.close()
-            workout = connection.execute('SELECT workout FROM entries_entry ORDER BY id DESC LIMIT 1;')
-            workout_type = workout.fetchone()[0]
-            connection.execute('UPDATE entries_entry SET seconds = :seconds WHERE workout = :workout;', {'seconds': selected_option_seconds, 'workout': workout_type})
-            connection.execute('UPDATE entries_entry SET minutes = :minutes WHERE workout = :workout;', {'minutes': selected_option_minutes, 'workout': workout_type})
+            exercise = connection.execute('SELECT exercise FROM entries_entry ORDER BY id DESC LIMIT 1;')
+            exercise_type = exercise.fetchone()[0]
+            connection.execute('UPDATE entries_entry SET seconds = :seconds WHERE exercise = :exercise;', {'seconds': selected_option_seconds, 'exercise': exercise_type})
+            connection.execute('UPDATE entries_entry SET minutes = :minutes WHERE exercise = :exercise;', {'minutes': selected_option_minutes, 'exercise': exercise_type})
             connection.commit()
 
 
@@ -90,23 +92,36 @@ class EntryListView(LockedView, ListView):
 
 class EntryDetailView(LockedView, DetailView):
     model = Entry
+    template_name = 'entries/entry_detail.html'
 
-
+class EntryOrderDetailView(LockedView, DetailView):
+    model = Entry
+    template_name = 'entries/entryorder_detail.html'
 
 class EntryCreateView(LockedView, SuccessMessageMixin, CreateView):
     model = Entry
-    fields = ["workout", "order_in_workout"]
+    fields = ["exercise", "order_in_workout"]
     success_url = reverse_lazy("entry-list")
     success_message = "Your new entry was created!"
 
 
 class EntryUpdateView(LockedView, SuccessMessageMixin, UpdateView):
     model = Entry
-    fields = ["workout", "order_in_workout"]
+    fields = ["exercise"]
     success_message = "Your entry was updated!"
+    template_name = 'entries/entry_form.html'
 
     def get_success_url(self):
         return reverse_lazy("entry-detail", kwargs={"pk": self.object.pk})
+
+class EntryUpdateView2(LockedView, SuccessMessageMixin, UpdateView):
+    model = Entry
+    fields = ["order_in_workout"]
+    success_message = "Your entry was updated!"
+    template_name = 'entries/entry_update_view.html'
+
+    def get_success_url(self):
+        return reverse_lazy("entryorder-detail", kwargs={"pk": self.object.pk})
 
 
 class EntryDeleteView(LockedView, SuccessMessageMixin, DeleteView):
