@@ -1,0 +1,14 @@
+{% extends 'entries/base.html' %}
+{% block content %}
+    <article>
+        <h3>{{ "Edit time of the exercise: " }}</h3>
+    </article>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Submit</button>
+    </form>
+    {% if selected_option %}
+        <p>You selected: {{ selected_option }}</p>
+    {% endif %}
+{% endblock %}

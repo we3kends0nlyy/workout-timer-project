@@ -66,6 +66,36 @@ class DropdownMenu(View):
             connection.commit()
 
 
+            return redirect('entry-list')
+        return render(request, self.template_name, {'form': form})
+
+
+class DropdownUpdateMenu(View):
+
+    template_name = 'buildworkout/entry_update_times.html'
+    model = Entry
+
+    def get(self, request, *args, **kwargs):
+        form = DropdownMenuForm(initial={'seconds': 10})
+
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = DropdownMenuForm(request.POST)
+        if form.is_valid():
+            selected_option_seconds = form.cleaned_data['seconds']
+            selected_option_minutes = form.cleaned_data['minutes']
+            connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None)
+            cursor = connection.execute('PRAGMA foreign_keys = ON;')
+            connection.commit()
+            cursor.close()
+            exercise = connection.execute('SELECT exercise FROM entries_entry ORDER BY id DESC LIMIT 1;')
+            exercise_type = exercise.fetchone()[0]
+            connection.execute('UPDATE entries_entry SET seconds = :seconds WHERE exercise = :exercise;', {'seconds': selected_option_seconds, 'exercise': exercise_type})
+            connection.execute('UPDATE entries_entry SET minutes = :minutes WHERE exercise = :exercise;', {'minutes': selected_option_minutes, 'exercise': exercise_type})
+            connection.commit()
+
+
             return redirect('entry-list')  # Redirect to the desired URL
         return render(request, self.template_name, {'form': form})
 
@@ -80,7 +110,7 @@ class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView):
     success_message = "Your new entry was created!"
     
     def form_valid(self, form):
-        workout = form.cleaned_data['workout']
+        workout = form.cleaned_data['exercise']
         return super().form_valid(form)
 
 
@@ -88,6 +118,21 @@ class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView):
 class EntryListView(LockedView, ListView):
     model = Entry
     queryset = Entry.objects.all()
+    template_name = 'entries/entry_list.html'
+
+    def get(self, request, *args, **kwargs):
+        seconds = self.kwargs['seconds']
+        # Use 'seconds' as needed
+        # Fetch entry using 'seconds' if required
+        # Process and render the view
+        return render(request, self.template_name)
+
+
+class EntryHomeListView(LockedView, ListView):
+    model = Entry
+    queryset = Entry.objects.all()
+    template_name = 'entries/homepage.html'
+
 
 
 class EntryDetailView(LockedView, DetailView):
