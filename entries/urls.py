@@ -9,24 +9,29 @@ urlpatterns = [
         name="dropdown"
     ),
     path(
-        "dropdown-update/<int:pk>/",
+        "dropdown-update/<int:seconds>/",
         views.DropdownUpdateMenu.as_view(),
         name="dropdown-update"
     ),
     path(
-        "entry-list",
+        "dropdown-update-minutes/<int:minutes>/",
+        views.DropdownUpdateMinutesMenu.as_view(),
+        name="dropdown-update-minutes"
+    ),
+    path(
+        "",
         views.EntryListView.as_view(),
         name="entry-list"
-    ),
-   path(
-        "",
-        views.EntryHomeListView.as_view(),
-        name="entry-homepage"
     ),
     path(
         "entry/<int:pk>",
         views.EntryDetailView.as_view(),
         name="entry-detail"
+    ),
+    path(
+        "entrytime-detail/<int:pk>",
+        views.EntryTimeDetailView.as_view(),
+        name="entrytime-detail"
     ),
     path(
         "entryorder-detail/<int:pk>",

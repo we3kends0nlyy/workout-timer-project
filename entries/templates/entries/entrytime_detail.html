@@ -1,0 +1,14 @@
+{% extends "entries/base.html" %}
+
+{% block content %}
+    <article>
+        <h3>{{ "SECONDS: " }}{{ entry.seconds }}</h3>
+        <h3>{{ "MINUTES: " }}{{ entry.minutes }}</h3>
+    </article>
+
+	<p>
+	    <a href="{% url 'dropdown-update' entry.seconds %}">✍️ Edit seconds</a>
+        <a href="{% url 'dropdown-update-minutes' entry.minutes %}">✍️ Edit minutes</a>
+	    <a href="{% url 'entry-delete' entry.id %}">⛔ Delete</a>
+	</p>
+{% endblock %}
