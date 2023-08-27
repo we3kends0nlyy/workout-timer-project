@@ -14,7 +14,7 @@ urlpatterns = [
         name="dropdown-update"
     ),
     path(
-        "dropdown-update-minutes/<int:minutes>/",
+        "dropdown<int:minutes>/updatemins",
         views.DropdownUpdateMinutesMenu.as_view(),
         name="dropdown-update-minutes"
     ),
@@ -31,7 +31,7 @@ urlpatterns = [
     path(
         "entrytime-detail/<int:pk>",
         views.EntryTimeDetailView.as_view(),
-        name="entrytime-detail"
+        name='entrytime-detail'
     ),
     path(
         "entryorder-detail/<int:pk>",

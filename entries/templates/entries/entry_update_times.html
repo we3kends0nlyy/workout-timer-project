@@ -8,9 +8,7 @@
         {{ form.as_p }}
         <button type="submit">Submit</button>
     </form>
-    <a href="{% url 'entrytime-detail' entry.id %}">
-        <button>Cancel</button>
-    </a>
+    <button onclick="window.history.back();">Back</button>
     {% if selected_option %}
         <p>You selected: {{ selected_option }}</p>
     {% endif %}
