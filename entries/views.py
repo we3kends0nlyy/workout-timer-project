@@ -14,6 +14,7 @@ from django.views.generic import (
 )
 
 from django import forms
+from django.db import transaction
 from .forms import DropdownMenuForm, DropdownUpdateMinutesMenuForm, DropdownUpdateSecondsMenuForm
 from .models import Entry
 import sqlite3
@@ -141,6 +142,12 @@ class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView):
     
     def form_valid(self, form):
         workout = form.cleaned_data['exercise']
+        new_entry = form.save(commit=False)
+        new_order = new_entry.order_in_workout
+        existing_entry = Entry.objects.filter(order_in_workout=new_order).first()
+        print(existing_entry,"HEHEEHEHE")
+        print(existing_entry.id)
+
         return super().form_valid(form)
 
 
