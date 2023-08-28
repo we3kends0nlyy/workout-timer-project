@@ -154,6 +154,8 @@ class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView):
             with sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None) as connection:
                 connection.execute('PRAGMA foreign_keys = ON;')
                 real_id = self.find_matching_order(connection, new_order_of_workout)
+                print("DONEDONEDONEDONE")
+                '''
                 if real_id is not None:
                     cursor = connection.cursor()
                     cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout WHERE id = :id;', {'order_in_workout': int(new_order_of_workout)+1, 'id': real_id[0]})
@@ -161,6 +163,7 @@ class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView):
                     cursor.close()
                     new_order_of_workout = int(new_order_of_workout)+1
                     real_id = self.find_matching_order(connection, new_order_of_workout)
+                '''
         return super().form_valid(form)
 
     def find_matching_order(self, connection, new_order_of_workout):
@@ -169,30 +172,35 @@ class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView):
         real_id = cursor.fetchone()
         connection.commit()
         cursor.close()
+        self.check_if_real_id_is_not_none(connection, new_order_of_workout, real_id)
+
+
+
+    def check_if_real_id_is_not_none(self, connection, new_order_of_workout, real_id):
         if real_id is not None:
-            self.check_for_one_more_up(connection, int(new_order_of_workout)+1)
-            if real_id is not None:
-                self.update_order(connection, new_order_of_workout, real_id)
-            
+            print(real_id, "THE REAL ONESS")
+            real_id, new_order_of_workout = self.check_for_one_more_up(connection, int(new_order_of_workout)+1)
+            self.check_if_real_id_is_not_none(connection, new_order_of_workout, real_id)
         else:
-            return real_id
+            self.update_order(connection, new_order_of_workout, real_id)
     
 
     def check_for_one_more_up(self, connection, new_order_of_workout):
         cursor = connection.cursor()
-        cursor.execute('SELECT id, exercise FROM entries_entry WHERE order_in_workout = :order_in_workout;', {'order_in_workout':new_order_of_workout+1})
+        cursor.execute('SELECT id, exercise FROM entries_entry WHERE order_in_workout = :order_in_workout;', {'order_in_workout':new_order_of_workout})
         real_id = cursor.fetchone()
         connection.commit()
         cursor.close()
-        return real_id
+        yield from (real_id, new_order_of_workout)
 
     def update_order(self, connection, new_order_of_workout, real_id):
+            print(real_id, "EEEEEEEE")
             cursor = connection.cursor()
-            cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout WHERE id = :id;', {'order_in_workout': int(new_order_of_workout)+1, 'id': real_id[0]})
+            cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout WHERE id = :id;', {'order_in_workout': int(new_order_of_workout)+1, 'id': real_id})
             connection.commit()
             cursor.close()
             new_order_of_workout = int(new_order_of_workout)+1
-
+            
 
 class EntryListView(LockedView, ListView):
     model = Entry
