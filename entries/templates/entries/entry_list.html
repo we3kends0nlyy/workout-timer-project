@@ -9,17 +9,24 @@
          <article>
              <h3>
                 <a href="{% url 'entryorder-detail' entry.id %}">
-                    {{ entry.order_in_workout }}
+                    {{ "Order in workout: "}}{{ entry.order_in_workout }}
                 </a>
            </h3>
                 <h3>
                     <a href="{% url 'entry-detail' entry.id %}">
-                        {{ entry.exercise }}
+                        {{ "Exercise: "}}{{ entry.exercise }}
                     </a>
                 </h3>
                 <h3>
+                    <style>
+                        .time-values {
+                            margin-right: 10px;
+                        }
+                    </style>
+                    
                     <a href="{% url 'entrytime-detail' entry.id %}">
-                        {{ entry.seconds }} {{ entry.minutes }}
+                        <span class="time-values">{{ "Minutes: " }}{{ entry.minutes }}</span>
+                        <span>{{ "Seconds: " }}{{ entry.seconds }}</span>
                     </a>
             </h3>
         </article>

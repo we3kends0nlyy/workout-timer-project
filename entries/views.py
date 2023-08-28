@@ -147,7 +147,7 @@ class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView):
 
 class EntryListView(LockedView, ListView):
     model = Entry
-    queryset = Entry.objects.all()
+    queryset = Entry.objects.all().order_by('order_in_workout')
     template_name = 'entries/entry_list.html'
 
 
