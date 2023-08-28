@@ -75,10 +75,16 @@ class DropdownUpdateMenu(View):
     template_name = 'entries/entry_update_times.html'
     model = Entry
 
+    def __init__(self) -> None:
+        self.entry_id = None
+
     def get(self, request, *args, **kwargs):
         seconds = self.kwargs['seconds']
         form = DropdownUpdateSecondsMenuForm(initial={'seconds': seconds})
         return render(request, self.template_name, {'form': form})
+
+    def get_id(self, request, *args, **kwargs):
+        return self.kwargs['id']
 
     def post(self, request, *args, **kwargs):
         form = DropdownUpdateSecondsMenuForm(request.POST)
@@ -88,13 +94,9 @@ class DropdownUpdateMenu(View):
             cursor = connection.execute('PRAGMA foreign_keys = ON;')
             connection.commit()
             cursor.close()
-            exercise = connection.execute('SELECT exercise FROM entries_entry ORDER BY id DESC LIMIT 1;')
-            exercise_type = exercise.fetchone()[0]
-            connection.execute('UPDATE entries_entry SET seconds = :seconds WHERE exercise = :exercise;', {'seconds': selected_option_seconds, 'exercise': exercise_type})
+            connection.execute('UPDATE entries_entry SET seconds = :seconds WHERE id = :id;', {'seconds': selected_option_seconds, 'id': self.get_id(0)})
             connection.commit()
-
-
-            return redirect('entry-list')  # Redirect to the desired URL
+            return redirect('entry-list')
         return render(request, self.template_name, {'form': form})
 
 
@@ -102,11 +104,18 @@ class DropdownUpdateMinutesMenu(View):
 
     template_name = 'entries/entry_update_times.html'
     model = Entry
+    
+    def __init__(self):
+        self.entry_id = None
 
     def get(self, request, *args, **kwargs):
         minutes = self.kwargs['minutes']
         form = DropdownUpdateMinutesMenuForm(initial={'minutes': minutes})
         return render(request, self.template_name, {'form': form})
+    
+    def get_id(self, request, *args, **kwargs):
+        return self.kwargs['id']
+
 
     def post(self, request, *args, **kwargs):
         form = DropdownUpdateMinutesMenuForm(request.POST)
@@ -116,13 +125,9 @@ class DropdownUpdateMinutesMenu(View):
             cursor = connection.execute('PRAGMA foreign_keys = ON;')
             connection.commit()
             cursor.close()
-            exercise = connection.execute('SELECT exercise FROM entries_entry ORDER BY id DESC LIMIT 1;')
-            exercise_type = exercise.fetchone()[0]
-            connection.execute('UPDATE entries_entry SET minutes = :minutes WHERE exercise = :exercise;', {'minutes': selected_option_minutes, 'exercise': exercise_type})
+            connection.execute('UPDATE entries_entry SET minutes = :minutes WHERE id = :id;', {'minutes': selected_option_minutes, 'id': self.get_id(0)})
             connection.commit()
-
-
-            return redirect('entry-list')  # Redirect to the desired URL
+            return redirect('entry-list')
         return render(request, self.template_name, {'form': form})
 
 

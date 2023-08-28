@@ -9,12 +9,12 @@ urlpatterns = [
         name="dropdown"
     ),
     path(
-        "dropdown-update/<int:seconds>/",
+        "dropdown/<int:seconds>/<int:id>/update",
         views.DropdownUpdateMenu.as_view(),
         name="dropdown-update"
     ),
     path(
-        "dropdown<int:minutes>/updatemins",
+        "dropdown<int:minutes>/<int:id>/updatemins",
         views.DropdownUpdateMinutesMenu.as_view(),
         name="dropdown-update-minutes"
     ),
