@@ -7,7 +7,7 @@
     </article>
 
 	<p>
-	    <a href="{% url 'dropdown-update' entry.seconds entry.id %}">✍️ Edit minutes</a>
-        <a href="{% url 'dropdown-update-minutes' entry.minutes entry.id %}">✍️ Edit seconds</a>
+	    <a href="{% url 'dropdown-update-minutes' entry.minutes entry.id %}">✍️ Edit minutes</a>
+        <a href="{% url 'dropdown-update' entry.seconds entry.id %}">✍️ Edit seconds</a>
 	</p>
 {% endblock %}

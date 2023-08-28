@@ -14,6 +14,7 @@ from django.views.generic import (
 )
 
 from django import forms
+from django.db.utils import OperationalError
 from django.db import transaction
 from .forms import DropdownMenuForm, DropdownUpdateMinutesMenuForm, DropdownUpdateSecondsMenuForm
 from .models import Entry
@@ -56,6 +57,8 @@ class DropdownMenu(View):
         if form.is_valid():
             selected_option_seconds = form.cleaned_data['seconds']
             selected_option_minutes = form.cleaned_data['minutes']
+
+
             connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None)
             cursor = connection.execute('PRAGMA foreign_keys = ON;')
             connection.commit()
@@ -139,17 +142,56 @@ class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView):
     template_name = 'buildworkout/buildworkout.html' 
     success_url = reverse_lazy("dropdown")
     success_message = "Your new entry was created!"
-    
+
     def form_valid(self, form):
         workout = form.cleaned_data['exercise']
-        new_entry = form.save(commit=False)
-        new_order = new_entry.order_in_workout
-        existing_entry = Entry.objects.filter(order_in_workout=new_order).first()
-        print(existing_entry,"HEHEEHEHE")
-        print(existing_entry.id)
 
+        new_entry = form.save(commit=False)
+        new_order_of_workout = new_entry.order_in_workout
+        existing_entry = Entry.objects.filter(order_in_workout=new_order_of_workout).first()
+        real_id = True
+        while real_id is not None:
+            with sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None) as connection:
+                connection.execute('PRAGMA foreign_keys = ON;')
+                real_id = self.find_matching_order(connection, new_order_of_workout)
+                if real_id is not None:
+                    cursor = connection.cursor()
+                    cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout WHERE id = :id;', {'order_in_workout': int(new_order_of_workout)+1, 'id': real_id[0]})
+                    connection.commit()
+                    cursor.close()
+                    new_order_of_workout = int(new_order_of_workout)+1
+                    real_id = self.find_matching_order(connection, new_order_of_workout)
         return super().form_valid(form)
 
+    def find_matching_order(self, connection, new_order_of_workout):
+        cursor = connection.cursor()
+        cursor.execute('SELECT id, exercise FROM entries_entry WHERE order_in_workout = :order_in_workout;', {'order_in_workout':new_order_of_workout})
+        real_id = cursor.fetchone()
+        connection.commit()
+        cursor.close()
+        if real_id is not None:
+            self.check_for_one_more_up(connection, int(new_order_of_workout)+1)
+            if real_id is not None:
+                self.update_order(connection, new_order_of_workout, real_id)
+            
+        else:
+            return real_id
+    
+
+    def check_for_one_more_up(self, connection, new_order_of_workout):
+        cursor = connection.cursor()
+        cursor.execute('SELECT id, exercise FROM entries_entry WHERE order_in_workout = :order_in_workout;', {'order_in_workout':new_order_of_workout+1})
+        real_id = cursor.fetchone()
+        connection.commit()
+        cursor.close()
+        return real_id
+
+    def update_order(self, connection, new_order_of_workout, real_id):
+            cursor = connection.cursor()
+            cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout WHERE id = :id;', {'order_in_workout': int(new_order_of_workout)+1, 'id': real_id[0]})
+            connection.commit()
+            cursor.close()
+            new_order_of_workout = int(new_order_of_workout)+1
 
 
 class EntryListView(LockedView, ListView):
