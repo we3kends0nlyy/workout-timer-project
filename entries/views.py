@@ -1,7 +1,9 @@
-from typing import Any
+from typing import Any, Optional
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.forms.forms import BaseForm
+from django.http.response import HttpResponse
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
 from django.views.generic import (
@@ -15,7 +17,7 @@ from django.views.generic import (
 
 from django import forms
 from django.db.utils import OperationalError
-from django.db import transaction
+from django.db import models, transaction
 from .forms import DropdownMenuForm, DropdownUpdateMinutesMenuForm, DropdownUpdateSecondsMenuForm
 from .models import Entry
 import sqlite3
@@ -239,10 +241,71 @@ class EntryUpdateView2(LockedView, SuccessMessageMixin, UpdateView):
     fields = ["order_in_workout"]
     success_message = "Your entry was updated!"
     template_name = 'entries/entry_update_view.html'
+    original_entry = None
+    original_num = None
+
+    def __init__(self) -> None:
+        self.ids = []
 
     def get_success_url(self):
         return reverse_lazy("entryorder-detail", kwargs={"pk": self.object.pk})
 
+    def get_object(self, queryset=None):
+        self.original_entry = super().get_object(queryset)
+        EntryUpdateView2.original_num = self.original_entry.order_in_workout
+        print(self.original_entry.order_in_workout)
+        return self.original_entry
+
+
+    def form_valid(self, form):
+        build_object = EntryUpdateView2()
+        new_entry = form.save(commit=False)
+        new_order_of_workout = new_entry.order_in_workout
+        print(new_order_of_workout, EntryUpdateView2.original_num, "yayayaya")
+        existing_entry = Entry.objects.filter(order_in_workout=new_order_of_workout).first()
+        real_id = True
+        while real_id is not None:
+            with sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None) as connection:
+                connection.execute('PRAGMA foreign_keys = ON;')
+                real_id = self.find_matching_order(connection, new_order_of_workout, build_object)
+        return super().form_valid(form)
+
+    def find_matching_order(self, connection, new_order_of_workout, build_object):
+        cursor = connection.cursor()
+        cursor.execute('SELECT id, exercise FROM entries_entry WHERE order_in_workout = :order_in_workout;', {'order_in_workout':new_order_of_workout})
+        real_id = cursor.fetchone()
+        connection.commit()
+        cursor.close()
+        self.check_if_real_id_is_not_none(connection, new_order_of_workout, real_id, build_object)
+
+
+
+    def check_if_real_id_is_not_none(self, connection, new_order_of_workout, real_id, build_object):
+        if real_id is not None:
+            build_object.ids.append(real_id[0])
+            real_id, new_order_of_workout = self.check_for_one_more_up(connection, int(new_order_of_workout)+1)
+            self.check_if_real_id_is_not_none(connection, new_order_of_workout, real_id, build_object)
+        else:
+            self.update_order(connection, new_order_of_workout, real_id, build_object)
+
+
+    def check_for_one_more_up(self, connection, new_order_of_workout):
+        cursor = connection.cursor()
+        cursor.execute('SELECT id, exercise FROM entries_entry WHERE order_in_workout = :order_in_workout;', {'order_in_workout':new_order_of_workout})
+        real_id = cursor.fetchone()
+        connection.commit()
+        cursor.close()
+        yield from (real_id, new_order_of_workout)
+ 
+    def update_order(self, connection, new_order_of_workout, real_id, build_object):
+            cursor = connection.cursor()
+            print(build_object.ids)
+            num_of_entries = len(build_object.ids)
+            for i in range(num_of_entries):
+                print(num_of_entries, i, new_order_of_workout)
+                cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout WHERE id = :id;', {'order_in_workout': int(new_order_of_workout-i), 'id': build_object.ids[-1-i]})
+                connection.commit()
+            cursor.close()
 
 
 class EntryDeleteView(LockedView, SuccessMessageMixin, DeleteView):
