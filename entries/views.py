@@ -143,9 +143,12 @@ class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView):
     success_url = reverse_lazy("dropdown")
     success_message = "Your new entry was created!"
 
+    def __init__(self) -> None:
+        self.ids = []
+
     def form_valid(self, form):
         workout = form.cleaned_data['exercise']
-
+        build_object = BuildWorkoutCreateView()
         new_entry = form.save(commit=False)
         new_order_of_workout = new_entry.order_in_workout
         existing_entry = Entry.objects.filter(order_in_workout=new_order_of_workout).first()
@@ -153,7 +156,7 @@ class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView):
         while real_id is not None:
             with sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None) as connection:
                 connection.execute('PRAGMA foreign_keys = ON;')
-                real_id = self.find_matching_order(connection, new_order_of_workout)
+                real_id = self.find_matching_order(connection, new_order_of_workout, build_object)
                 print("DONEDONEDONEDONE")
                 '''
                 if real_id is not None:
@@ -166,24 +169,24 @@ class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView):
                 '''
         return super().form_valid(form)
 
-    def find_matching_order(self, connection, new_order_of_workout):
+    def find_matching_order(self, connection, new_order_of_workout, build_object):
         cursor = connection.cursor()
         cursor.execute('SELECT id, exercise FROM entries_entry WHERE order_in_workout = :order_in_workout;', {'order_in_workout':new_order_of_workout})
         real_id = cursor.fetchone()
         connection.commit()
         cursor.close()
-        self.check_if_real_id_is_not_none(connection, new_order_of_workout, real_id)
+        self.check_if_real_id_is_not_none(connection, new_order_of_workout, real_id, build_object)
 
 
 
-    def check_if_real_id_is_not_none(self, connection, new_order_of_workout, real_id):
+    def check_if_real_id_is_not_none(self, connection, new_order_of_workout, real_id, build_object):
         if real_id is not None:
-            print(real_id, "THE REAL ONESS")
+            build_object.ids.append(real_id[0])
             real_id, new_order_of_workout = self.check_for_one_more_up(connection, int(new_order_of_workout)+1)
-            self.check_if_real_id_is_not_none(connection, new_order_of_workout, real_id)
+            self.check_if_real_id_is_not_none(connection, new_order_of_workout, real_id, build_object)
         else:
-            self.update_order(connection, new_order_of_workout, real_id)
-    
+            self.update_order(connection, new_order_of_workout, real_id, build_object)
+
 
     def check_for_one_more_up(self, connection, new_order_of_workout):
         cursor = connection.cursor()
@@ -192,14 +195,16 @@ class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView):
         connection.commit()
         cursor.close()
         yield from (real_id, new_order_of_workout)
-
-    def update_order(self, connection, new_order_of_workout, real_id):
-            print(real_id, "EEEEEEEE")
+ 
+    def update_order(self, connection, new_order_of_workout, real_id, build_object):
             cursor = connection.cursor()
-            cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout WHERE id = :id;', {'order_in_workout': int(new_order_of_workout)+1, 'id': real_id})
-            connection.commit()
+            print(build_object.ids)
+            num_of_entries = len(build_object.ids)
+            for i in range(num_of_entries):
+                print(num_of_entries, i, new_order_of_workout)
+                cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout WHERE id = :id;', {'order_in_workout': int(new_order_of_workout-i), 'id': build_object.ids[-1-i]})
+                connection.commit()
             cursor.close()
-            new_order_of_workout = int(new_order_of_workout)+1
             
 
 class EntryListView(LockedView, ListView):
