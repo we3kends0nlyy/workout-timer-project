@@ -157,16 +157,6 @@ class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView):
             with sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None) as connection:
                 connection.execute('PRAGMA foreign_keys = ON;')
                 real_id = self.find_matching_order(connection, new_order_of_workout, build_object)
-                print("DONEDONEDONEDONE")
-                '''
-                if real_id is not None:
-                    cursor = connection.cursor()
-                    cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout WHERE id = :id;', {'order_in_workout': int(new_order_of_workout)+1, 'id': real_id[0]})
-                    connection.commit()
-                    cursor.close()
-                    new_order_of_workout = int(new_order_of_workout)+1
-                    real_id = self.find_matching_order(connection, new_order_of_workout)
-                '''
         return super().form_valid(form)
 
     def find_matching_order(self, connection, new_order_of_workout, build_object):
@@ -205,7 +195,7 @@ class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView):
                 cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout WHERE id = :id;', {'order_in_workout': int(new_order_of_workout-i), 'id': build_object.ids[-1-i]})
                 connection.commit()
             cursor.close()
-            
+
 
 class EntryListView(LockedView, ListView):
     model = Entry
