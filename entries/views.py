@@ -158,7 +158,7 @@ class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView):
         while real_id is not None:
             with sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None) as connection:
                 connection.execute('PRAGMA foreign_keys = ON;')
-                real_id = self.find_matching_order(connection, new_order_of_workout, build_object)
+                self.find_matching_order(connection, new_order_of_workout, build_object)
         return super().form_valid(form)
 
     def find_matching_order(self, connection, new_order_of_workout, build_object):
@@ -256,37 +256,50 @@ class EntryUpdateView2(LockedView, SuccessMessageMixin, UpdateView):
         print(self.original_entry.order_in_workout)
         return self.original_entry
 
-
     def form_valid(self, form):
         build_object = EntryUpdateView2()
         new_entry = form.save(commit=False)
         new_order_of_workout = new_entry.order_in_workout
+        new_order_id = new_entry.id
         print(new_order_of_workout, EntryUpdateView2.original_num, "yayayaya")
         existing_entry = Entry.objects.filter(order_in_workout=new_order_of_workout).first()
         real_id = True
+        real_id2 = None
         while real_id is not None:
             with sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None) as connection:
                 connection.execute('PRAGMA foreign_keys = ON;')
-                real_id = self.find_matching_order(connection, new_order_of_workout, build_object)
+                real_id = self.find_matching_order(connection, new_order_of_workout, EntryUpdateView2.original_num, build_object, new_order_id, new_entry)
         return super().form_valid(form)
 
-    def find_matching_order(self, connection, new_order_of_workout, build_object):
+    def find_matching_order(self, connection, new_order_of_workout, orig_workout_num, build_object, new_order_id, new_entry):
         cursor = connection.cursor()
         cursor.execute('SELECT id, exercise FROM entries_entry WHERE order_in_workout = :order_in_workout;', {'order_in_workout':new_order_of_workout})
         real_id = cursor.fetchone()
         connection.commit()
         cursor.close()
-        self.check_if_real_id_is_not_none(connection, new_order_of_workout, real_id, build_object)
+        if new_order_of_workout <= orig_workout_num:
+            self.check_if_real_id_is_not_none(connection, new_order_of_workout, orig_workout_num, real_id, build_object, new_order_id, new_entry)
+        if new_order_of_workout > orig_workout_num:
+            self.check_if_real_id_down_is_not_none(connection, new_order_of_workout, orig_workout_num, real_id, build_object, new_order_id, new_entry)
+        
 
 
 
-    def check_if_real_id_is_not_none(self, connection, new_order_of_workout, real_id, build_object):
+    def check_if_real_id_is_not_none(self, connection, new_order_of_workout, orig_num_workout, real_id, build_object, new_order_id, new_entry):
         if real_id is not None:
             build_object.ids.append(real_id[0])
             real_id, new_order_of_workout = self.check_for_one_more_up(connection, int(new_order_of_workout)+1)
-            self.check_if_real_id_is_not_none(connection, new_order_of_workout, real_id, build_object)
+            self.check_if_real_id_is_not_none(connection, new_order_of_workout, orig_num_workout, real_id, build_object, new_order_id, new_entry)
         else:
-            self.update_order(connection, new_order_of_workout, real_id, build_object)
+            self.update_order(connection, new_order_of_workout, len(build_object.ids), orig_num_workout, real_id, build_object, "up", new_order_id, new_entry)
+
+    def check_if_real_id_down_is_not_none(self, connection, new_order_of_workout, orig_num_workout, real_id, build_object, new_order_id, new_entry):
+        if real_id is not None:
+            build_object.ids.append(real_id[0])
+            real_id, new_order_of_workout = self.check_for_one_more_up(connection, int(new_order_of_workout)-1)
+            self.check_if_real_id_down_is_not_none(connection, new_order_of_workout, orig_num_workout, real_id, build_object, new_order_id, new_entry)
+        else:
+            self.update_order(connection, new_order_of_workout, len(build_object.ids), orig_num_workout, real_id, build_object, "down", new_order_id, new_entry)
 
 
     def check_for_one_more_up(self, connection, new_order_of_workout):
@@ -297,15 +310,28 @@ class EntryUpdateView2(LockedView, SuccessMessageMixin, UpdateView):
         cursor.close()
         yield from (real_id, new_order_of_workout)
  
-    def update_order(self, connection, new_order_of_workout, real_id, build_object):
+    def update_order(self, connection, new_order_of_workout, leng, orig_num_workout, real_id, build_object, up_or_down, new_order_id, new_entry):
             cursor = connection.cursor()
-            print(build_object.ids)
             num_of_entries = len(build_object.ids)
-            for i in range(num_of_entries):
-                print(num_of_entries, i, new_order_of_workout)
-                cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout WHERE id = :id;', {'order_in_workout': int(new_order_of_workout-i), 'id': build_object.ids[-1-i]})
+            if len(build_object.ids) == 0:
+                cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout WHERE id = :id;', {'order_in_workout': new_order_of_workout, 'id': new_order_id})
                 connection.commit()
+            if up_or_down == "down" and len(build_object.ids) != 0:
+                for i in range(num_of_entries-1):
+                    print(num_of_entries, i, leng)
+                    cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout WHERE id = :id;', {'order_in_workout': int(leng-(i+1)), 'id': build_object.ids[i]})
+                    connection.commit()
+                cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout WHERE id = :id;', {'order_in_workout': int(leng), 'id': build_object.ids[-1]})
+                connection.commit()
+            if up_or_down == "up" and len(build_object.ids) != 0:
+                print(build_object.ids, 'LISTIST')
+                for i in range(1, ((orig_num_workout-new_entry.order_in_workout)+1)):
+                    print(num_of_entries, i, new_entry.order_in_workout)
+                    print(orig_num_workout, "ORIG")
+                    cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout WHERE id = :id;', {'order_in_workout': int(new_entry.order_in_workout+i), 'id': build_object.ids[i-1]})
+                    connection.commit()
             cursor.close()
+
 
 
 class EntryDeleteView(LockedView, SuccessMessageMixin, DeleteView):
