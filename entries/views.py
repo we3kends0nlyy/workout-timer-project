@@ -309,7 +309,7 @@ class EntryUpdateView2(LockedView, SuccessMessageMixin, UpdateView):
         connection.commit()
         cursor.close()
         yield from (real_id, new_order_of_workout)
- 
+
     def update_order(self, connection, new_order_of_workout, leng, orig_num_workout, real_id, build_object, up_or_down, new_order_id, new_entry):
             cursor = connection.cursor()
             num_of_entries = len(build_object.ids)
@@ -317,12 +317,13 @@ class EntryUpdateView2(LockedView, SuccessMessageMixin, UpdateView):
                 cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout WHERE id = :id;', {'order_in_workout': new_order_of_workout, 'id': new_order_id})
                 connection.commit()
             if up_or_down == "down" and len(build_object.ids) != 0:
-                for i in range(num_of_entries-1):
-                    print(num_of_entries, i, leng)
-                    cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout WHERE id = :id;', {'order_in_workout': int(leng-(i+1)), 'id': build_object.ids[i]})
+                print(build_object.ids, 'LISTLISTLIST2')
+                for i in range(1, ((new_entry.order_in_workout-orig_num_workout)+1)):
+                    print(i, new_entry.order_in_workout)
+                    cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout WHERE id = :id;', {'order_in_workout': int(new_entry.order_in_workout-i), 'id': build_object.ids[i-1]})
                     connection.commit()
-                cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout WHERE id = :id;', {'order_in_workout': int(leng), 'id': build_object.ids[-1]})
-                connection.commit()
+                #cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout WHERE id = :id;', {'order_in_workout': int(leng), 'id': build_object.ids[-1]})
+                #connection.commit()
             if up_or_down == "up" and len(build_object.ids) != 0:
                 print(build_object.ids, 'LISTIST')
                 for i in range(1, ((orig_num_workout-new_entry.order_in_workout)+1)):
