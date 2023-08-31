@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any, Dict, Optional
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
@@ -152,11 +152,9 @@ class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView):
         self.ids = []
 
     def form_valid(self, form):
-        workout = form.cleaned_data['exercise']
         build_object = BuildWorkoutCreateView()
         new_entry = form.save(commit=False)
         new_order_of_workout = new_entry.order_in_workout
-        existing_entry = Entry.objects.filter(order_in_workout=new_order_of_workout).first()
         real_id = True
         while real_id is not None:
             with sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None) as connection:
@@ -258,6 +256,7 @@ class EntryUpdateView2(LockedView, SuccessMessageMixin, UpdateView):
         EntryUpdateView2.original_num = self.original_entry.order_in_workout
         print(self.original_entry.order_in_workout)
         return self.original_entry
+        
 
     def form_valid(self, form):
         build_object = EntryUpdateView2()
@@ -345,7 +344,33 @@ class EntryDeleteView(LockedView, SuccessMessageMixin, DeleteView):
     model = Entry
     success_url = reverse_lazy("entry-list")
     success_message = "Your entry was deleted!"
+    self_object = None
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, self.success_message)
         return super().delete(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['deleted_object'] = self.object
+        EntryDeleteView.self_object = self.object
+        result = True
+        current_order = int(EntryDeleteView.self_object.order_in_workout) + 1
+        with sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None) as connection:
+            connection.execute('PRAGMA foreign_keys = ON;')
+            cursor = connection.cursor()
+            while result is not None:
+                cursor.execute('SELECT id FROM entries_entry WHERE order_in_workout = :order_in_workout;', {'order_in_workout': current_order})
+                id_num = cursor.fetchone()
+                try:
+                    result = cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout WHERE id = :id;', {'order_in_workout': current_order-1, 'id': id_num[0]})
+                    print("hi")
+                    print(result.fetchone(), "RESULT")
+                    connection.commit()
+                    current_order += 1
+                except TypeError as e:
+                    print(e)
+                    cursor.close()
+                    result = None
+        cursor.close()
+        return super().get_context_data(**kwargs)
