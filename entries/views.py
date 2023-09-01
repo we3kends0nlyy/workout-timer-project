@@ -348,32 +348,36 @@ class EntryUpdateView2(LockedView, SuccessMessageMixin, UpdateView):
             cursor.execute('SELECT COUNT(*) FROM entries_entry')
             num_of_exercises = cursor.fetchone()
             if new_entry.order_in_workout - 1 > num_of_exercises[0]:
-                for order in range(2, new_entry.order_in_workout):
+                for order in range(2, new_entry.order_in_workout+1):
                     cursor.execute('SELECT id FROM entries_entry WHERE order_in_workout = :order_in_workout;', {'order_in_workout':order})
                     does_id_exist = cursor.fetchone()
                     connection.commit()
                     if does_id_exist is not None:
-                        print(does_id_exist[0], "EXIST:?")
-                        lowest_order = self.search_for_lowest_order(connection, order-1)
-                        if lowest_order is not None:
-                            cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout WHERE id = :id;', {'order_in_workout': lowest_order, 'id': does_id_exist[0]})
-                            connection.commit() 
+                        order = self.search_for_lowest_order(connection, order)
+                        if order is not None:
+                            cursor.execute('SELECT id FROM entries_entry WHERE order_in_workout = :order_in_workout;', {'order_in_workout':order})
+                            does_it_equal_one = cursor.fetchone()
+                            connection.commit()
+                            if does_it_equal_one is None:
+                                cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout WHERE id = :id;', {'order_in_workout': order, 'id': does_id_exist[0]})
+                                connection.commit() 
+                            else:
+                                continue
+                        else:
+                            continue
                     else:
                         continue
                 cursor.close()
 
     def search_for_lowest_order(self, connection, order, lowest_id=None):
         cursor = connection.cursor()
-        if lowest_id is None or order != 1:
-            print(lowest_id, order, "ORDER")
+        while lowest_id is None or order > 1:
             cursor.execute('SELECT id FROM entries_entry WHERE order_in_workout = :order_in_workout;', {'order_in_workout': order})
             lowest_id = cursor.fetchone()
             connection.commit()
             order -= 1
-            self.search_for_lowest_order(connection, order, lowest_id)
-        else:
-            return order
-
+        return order+2
+    
 
 
 
