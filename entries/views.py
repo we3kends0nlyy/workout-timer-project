@@ -50,11 +50,20 @@ class DropdownMenu(View):
     model = Entry
 
     def get(self, request, *args, **kwargs):
-        form = DropdownMenuForm()  # Initialize the form
-
+        form = DropdownMenuForm()
+        connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None)
+        cursor = connection.execute('PRAGMA foreign_keys = ON;')
+        connection.commit()
+        cursor.close()
+        exercise = connection.execute('SELECT exercise FROM entries_entry ORDER BY id DESC LIMIT 1;')
+        exercise_type = exercise.fetchone()[0]
+        connection.execute('UPDATE entries_entry SET seconds = :seconds WHERE exercise = :exercise;', {'seconds': 0, 'exercise': exercise_type})
+        connection.execute('UPDATE entries_entry SET minutes = :minutes WHERE exercise = :exercise;', {'minutes': 0, 'exercise': exercise_type})
+        connection.commit()
         return render(request, self.template_name, {'form': form})
 
     def post(self, request, *args, **kwargs):
+
         form = DropdownMenuForm(request.POST)
         if form.is_valid():
             selected_option_seconds = form.cleaned_data['seconds']
@@ -336,7 +345,36 @@ class EntryUpdateView2(LockedView, SuccessMessageMixin, UpdateView):
                         connection.commit()
                     except IndexError:
                         continue
-            cursor.close()
+            cursor.execute('SELECT COUNT(*) FROM entries_entry')
+            num_of_exercises = cursor.fetchone()
+            if new_entry.order_in_workout - 1 > num_of_exercises[0]:
+                for order in range(2, new_entry.order_in_workout):
+                    cursor.execute('SELECT id FROM entries_entry WHERE order_in_workout = :order_in_workout;', {'order_in_workout':order})
+                    does_id_exist = cursor.fetchone()
+                    connection.commit()
+                    if does_id_exist is not None:
+                        print(does_id_exist[0], "EXIST:?")
+                        lowest_order = self.search_for_lowest_order(connection, order-1)
+                        if lowest_order is not None:
+                            cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout WHERE id = :id;', {'order_in_workout': lowest_order, 'id': does_id_exist[0]})
+                            connection.commit() 
+                    else:
+                        continue
+                cursor.close()
+    def search_for_lowest_order(self, connection, order, lowest_id=None):
+        cursor = connection.cursor()
+        if lowest_id is None or order != 1:
+            print(lowest_id, order, "ORDER")
+            cursor.execute('SELECT id FROM entries_entry WHERE order_in_workout = :order_in_workout;', {'order_in_workout': order})
+            lowest_id = cursor.fetchone()
+            connection.commit()
+            order -= 1
+            self.search_for_lowest_order(connection, order, lowest_id)
+        else:
+            return order
+
+
+
 
 
 
