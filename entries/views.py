@@ -361,6 +361,7 @@ class EntryUpdateView2(LockedView, SuccessMessageMixin, UpdateView):
                     else:
                         continue
                 cursor.close()
+
     def search_for_lowest_order(self, connection, order, lowest_id=None):
         cursor = connection.cursor()
         if lowest_id is None or order != 1:
