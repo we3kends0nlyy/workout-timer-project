@@ -8,6 +8,7 @@
         {{ form.as_p }}
         <button type="submit">Submit</button>
     </form>
+    <button onclick="window.history.back();">Back</button>
     {% if selected_option %}
         <p>You selected: {{ selected_option }}</p>
     {% endif %}

@@ -117,7 +117,7 @@ class DropdownUpdateMenu(View):
 
 class DropdownUpdateMinutesMenu(View):
 
-    template_name = 'entries/entry_update_times.html'
+    template_name = 'entries/entry_update_times_minutes.html'
     model = Entry
     
     def __init__(self):
@@ -169,6 +169,15 @@ class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView):
             with sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None) as connection:
                 connection.execute('PRAGMA foreign_keys = ON;')
                 real_id = self.find_matching_order(connection, new_order_of_workout, build_object)
+
+                form.instance.order_in_workout = EntryUpdateView2.new_order - 1
+                form.save(commit=False)
+                
+                cursor.execute('SELECT COUNT(*) FROM entries_entry')
+                num_of_exercises = cursor.fetchone()
+                if new_order_of_workout > num_of_exercises[0]:
+                    cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout WHERE order_in_workout = :new_order_of_workout;', {'order_in_workout': num_of_entries+1, 'new_order_of_workout': new_order_of_workout})
+                    connection.commit()
         return super().form_valid(form)
 
     def find_matching_order(self, connection, new_order_of_workout, build_object):
@@ -252,6 +261,7 @@ class EntryUpdateView2(LockedView, SuccessMessageMixin, UpdateView):
     original_entry = None
     original_num = None
     new_order = None
+    num_of_exercises = None
 
     def __init__(self) -> None:
         self.ids = []
@@ -270,23 +280,35 @@ class EntryUpdateView2(LockedView, SuccessMessageMixin, UpdateView):
         new_entry = form.save(commit=False)
         new_order_of_workout = new_entry.order_in_workout
         new_order_id = new_entry.id
-        existing_entry = Entry.objects.filter(order_in_workout=new_order_of_workout).first()
         real_id = True
         real_id2 = None
         while real_id is not None:
             with sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None) as connection:
                 connection.execute('PRAGMA foreign_keys = ON;')
+                cursor = connection.cursor()
+                cursor.execute('SELECT COUNT(*) FROM entries_entry')
+                EntryUpdateView2.num_of_exercises = cursor.fetchone()
                 real_id = self.find_matching_order(connection, new_order_of_workout, EntryUpdateView2.original_num, build_object, new_order_id, new_entry)
         if EntryUpdateView2.new_order is not None:
-            form.instance.order_in_workout = EntryUpdateView2.new_order
-            form.save(commit=False)
+            print(EntryUpdateView2.new_order, EntryUpdateView2.num_of_exercises[0])
+            if EntryUpdateView2.new_order - 1 == EntryUpdateView2.num_of_exercises[0]:
+                form.instance.order_in_workout = EntryUpdateView2.new_order - 1
+                form.save(commit=False)
+            else:
+                form.instance.order_in_workout = EntryUpdateView2.new_order
+                form.save(commit=False)
         if EntryUpdateView2.original_num == 1:
-            for i in range(2, EntryUpdateView2.new_order + 1):
+            for i in range(1, int(EntryUpdateView2.new_order) + 1):
                 cursor = connection.cursor()
-                cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout_new WHERE order_in_workout = :i;', {'i': i, 'order_in_workout_new': i-1})
-                connection.commit() 
+                if new_order_of_workout == len(build_object.ids):
+                    cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout_new WHERE order_in_workout = :i;', {'i': i, 'order_in_workout_new': i})
+                    connection.commit() 
+                else:
+                    print(i)
+                    cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout_new WHERE order_in_workout = :i;', {'i': i, 'order_in_workout_new': i-1})
+                    connection.commit()
         return super().form_valid(form)
-    
+
 
     def find_matching_order(self, connection, new_order_of_workout, orig_workout_num, build_object, new_order_id, new_entry):
         cursor = connection.cursor()
@@ -338,8 +360,6 @@ class EntryUpdateView2(LockedView, SuccessMessageMixin, UpdateView):
                 for i in range(1, ((new_entry.order_in_workout-orig_num_workout)+1)):
                     cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout WHERE id = :id;', {'order_in_workout': int(new_entry.order_in_workout-i), 'id': build_object.ids[i-1]})
                     connection.commit()
-                #cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout WHERE id = :id;', {'order_in_workout': int(leng), 'id': build_object.ids[-1]})
-                #connection.commit()
             if up_or_down == "up" and len(build_object.ids) != 0:
                 for i in range(1, ((orig_num_workout-new_entry.order_in_workout)+1)):
                     try:
@@ -347,15 +367,13 @@ class EntryUpdateView2(LockedView, SuccessMessageMixin, UpdateView):
                         connection.commit()
                     except IndexError:
                         continue
-            cursor.execute('SELECT COUNT(*) FROM entries_entry')
-            num_of_exercises = cursor.fetchone()
-            if new_entry.order_in_workout - 1 > num_of_exercises[0]:
+            if new_entry.order_in_workout - 1 > EntryUpdateView2.num_of_exercises[0]:
                 for order in range(2, new_entry.order_in_workout+1):
                     cursor.execute('SELECT id FROM entries_entry WHERE order_in_workout = :order_in_workout;', {'order_in_workout':order})
                     does_id_exist = cursor.fetchone()
                     connection.commit()
                     if does_id_exist is not None:
-                        order = self.search_for_lowest_order(connection, order-1, orig_num_workout)
+                        order = self.search_for_lowest_order(connection, order-1)
                         cursor.execute('SELECT id FROM entries_entry WHERE order_in_workout = :order_in_workout;', {'order_in_workout':order})
                         does_it_equal_one = cursor.fetchone()
                         connection.commit()
@@ -367,12 +385,15 @@ class EntryUpdateView2(LockedView, SuccessMessageMixin, UpdateView):
                     else:
                         continue
                 cursor.close()
-                if orig_num_workout == 1:
+                if EntryUpdateView2.original_num == 1:
                     EntryUpdateView2.new_order = order - 1
                 else:
                     EntryUpdateView2.new_order = order
+            if EntryUpdateView2.new_order is None:
+                if EntryUpdateView2.original_num == 1:
+                    EntryUpdateView2.new_order = new_entry.order_in_workout
 
-    def search_for_lowest_order(self, connection, order, orig_num_workout, lowest_id=None):
+    def search_for_lowest_order(self, connection, order, lowest_id=None):
         cursor = connection.cursor()
         while lowest_id is None and order >= 1:
             cursor.execute('SELECT id FROM entries_entry WHERE order_in_workout = :order_in_workout;', {'order_in_workout': order})
@@ -391,29 +412,31 @@ class EntryDeleteView(LockedView, SuccessMessageMixin, DeleteView):
     success_url = reverse_lazy("entry-list")
     success_message = "Your entry was deleted!"
     self_object = None
+    current_order = None
+    result = True
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, self.success_message)
+        with sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None) as connection:
+            connection.execute('PRAGMA foreign_keys = ON;')
+            cursor = connection.cursor()
+            while EntryDeleteView.result is not None:
+                cursor.execute('SELECT id FROM entries_entry WHERE order_in_workout = :order_in_workout;', {'order_in_workout': EntryDeleteView.current_order})
+                id_num = cursor.fetchone()
+                try:
+                    EntryDeleteView.result = cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout WHERE id = :id;', {'order_in_workout': EntryDeleteView.current_order-1, 'id': id_num[0]})
+                    connection.commit()
+                    EntryDeleteView.current_order += 1
+                except TypeError as e:
+                    cursor.close()
+                    break
+                    result = None
+        cursor.close()
         return super().delete(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['deleted_object'] = self.object
         EntryDeleteView.self_object = self.object
-        result = True
-        current_order = int(EntryDeleteView.self_object.order_in_workout) + 1
-        with sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None) as connection:
-            connection.execute('PRAGMA foreign_keys = ON;')
-            cursor = connection.cursor()
-            while result is not None:
-                cursor.execute('SELECT id FROM entries_entry WHERE order_in_workout = :order_in_workout;', {'order_in_workout': current_order})
-                id_num = cursor.fetchone()
-                try:
-                    result = cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout WHERE id = :id;', {'order_in_workout': current_order-1, 'id': id_num[0]})
-                    connection.commit()
-                    current_order += 1
-                except TypeError as e:
-                    cursor.close()
-                    result = None
-        cursor.close()
+        EntryDeleteView.current_order = int(EntryDeleteView.self_object.order_in_workout) + 1
         return super().get_context_data(**kwargs)

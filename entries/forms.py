@@ -1,4 +1,6 @@
+from typing import Any, Dict
 from django import forms
+from django.core.exceptions import ValidationError
 
 class DropdownMenuForm(forms.Form):
     seconds = forms.ChoiceField(choices=[(0, '0'),(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5'), 
@@ -25,6 +27,14 @@ class DropdownMenuForm(forms.Form):
                                            (46, '46'), (47, '47'), (48, '48'), (49, '49'), (50, '50'), 
                                            (51, '51'), (52, '52'), (53, '53'), (54, '54'), (55, '55'), 
                                            (56, '56'), (57, '57'), (58, '58'), (59, '59'), (60, '60')])
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        seconds = int(cleaned_data.get('seconds', 0))
+        minutes = int(cleaned_data.get('minutes', 0))
+
+        if seconds == 0 and minutes == 0:
+            raise ValidationError("Please choose a time greater than zero.")
 
 
 class DropdownUpdateSecondsMenuForm(forms.Form):
