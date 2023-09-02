@@ -169,15 +169,12 @@ class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView):
             with sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None) as connection:
                 connection.execute('PRAGMA foreign_keys = ON;')
                 real_id = self.find_matching_order(connection, new_order_of_workout, build_object)
-
-                form.instance.order_in_workout = EntryUpdateView2.new_order - 1
-                form.save(commit=False)
-                
+                cursor = connection.cursor()
                 cursor.execute('SELECT COUNT(*) FROM entries_entry')
                 num_of_exercises = cursor.fetchone()
                 if new_order_of_workout > num_of_exercises[0]:
-                    cursor.execute('UPDATE entries_entry SET order_in_workout = :order_in_workout WHERE order_in_workout = :new_order_of_workout;', {'order_in_workout': num_of_entries+1, 'new_order_of_workout': new_order_of_workout})
-                    connection.commit()
+                    form.instance.order_in_workout = num_of_exercises[0] + 1
+                    form.save(commit=False)
         return super().form_valid(form)
 
     def find_matching_order(self, connection, new_order_of_workout, build_object):

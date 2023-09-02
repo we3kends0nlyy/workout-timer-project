@@ -50,6 +50,12 @@ class DropdownUpdateSecondsMenuForm(forms.Form):
                                            (46, '46'), (47, '47'), (48, '48'), (49, '49'), (50, '50'), 
                                            (51, '51'), (52, '52'), (53, '53'), (54, '54'), (55, '55'), 
                                            (56, '56'), (57, '57'), (58, '58'), (59, '59'), (60, '60')])
+    def clean(self):
+        cleaned_data = super().clean()
+        seconds = int(cleaned_data.get('seconds', 0))
+
+        if seconds == 0:
+            raise ValidationError("Please choose a time greater than zero.")
     
 
 
@@ -67,3 +73,9 @@ class DropdownUpdateMinutesMenuForm(forms.Form):
                                            (51, '51'), (52, '52'), (53, '53'), (54, '54'), (55, '55'), 
                                            (56, '56'), (57, '57'), (58, '58'), (59, '59'), (60, '60')])
 
+    def clean(self):
+        cleaned_data = super().clean()
+        minutes = int(cleaned_data.get('minutes', 0))
+
+        if minutes == 0:
+            raise ValidationError("Please choose a time greater than zero.")
