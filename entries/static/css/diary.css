@@ -105,10 +105,19 @@ input[type="submit"] {
     list-style: none;
 }
 
+
 .message {
     width: 100%;
     background: lightblue;
     padding: 1rem;
     text-align: center;
     margin: 1rem 0;
+}
+.success-message-container {
+    /* Position the container wherever you want */
+    position: relative; /* or absolute, fixed, etc. */
+    top: 150px;
+    left: 700px;
+
+    /* Apply styles to the success message */
 }

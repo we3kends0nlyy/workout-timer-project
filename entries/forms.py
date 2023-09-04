@@ -1,6 +1,7 @@
 from typing import Any, Dict
 from django import forms
 from django.core.exceptions import ValidationError
+import sqlite3
 
 class DropdownMenuForm(forms.Form):
     seconds = forms.ChoiceField(choices=[(0, '0'),(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5'), 
@@ -79,3 +80,18 @@ class DropdownUpdateMinutesMenuForm(forms.Form):
 
         if minutes == 0:
             raise ValidationError("Please choose a time greater than zero.")
+
+class CheckWorkout(forms.Form):
+    exercises = forms.ChoiceField
+
+    def clean(self):
+
+        cleaned_data = super().clean()
+        connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None)
+        cursor = connection.execute('PRAGMA foreign_keys = ON;')
+        connection.commit()
+        cursor.close()
+        num = connection.execute('SELECT COUNT(*) FROM entries_entry')
+        nums = num.fetchone()[0]
+        if nums == 0:
+            raise ValidationError("You must add an exercise to the workout before starting!")

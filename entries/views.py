@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.forms.forms import BaseForm
-from django.http.response import HttpResponse
+from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
 from django.views.generic import (
@@ -14,11 +14,12 @@ from django.views.generic import (
     DeleteView,
     View
 )
-
+from django.http import JsonResponse
+from django.contrib import messages
 from django import forms
 from django.db.utils import OperationalError
 from django.db import models, transaction
-from .forms import DropdownMenuForm, DropdownUpdateMinutesMenuForm, DropdownUpdateSecondsMenuForm
+from .forms import DropdownMenuForm, DropdownUpdateMinutesMenuForm, DropdownUpdateSecondsMenuForm, CheckWorkout
 from .models import Entry
 import sqlite3
 
@@ -212,13 +213,25 @@ class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView):
             cursor.close()
 
 
-class EntryListView(LockedView, ListView):
+class EntryListView(ListView, View):
     model = Entry
     queryset = Entry.objects.all().order_by('order_in_workout')
     template_name = 'entries/entry_list.html'
 
+    def post(self, request, *args, **kwargs):
+        form = CheckWorkout(request.POST)
+        if form.is_valid():
+            connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None)
+            cursor = connection.execute('PRAGMA foreign_keys = ON;')
+            connection.commit()
+            cursor.close()
+            num = connection.execute('SELECT COUNT(*) FROM entries_entry')
+            nums = num.fetchone()[0]
+            return redirect('workout')
+        return render(request, self.template_name, {'form': form})
 
-
+class WorkoutGo(View):
+    template_name = 'entries/workout.html'
 
 
 class EntryDetailView(LockedView, DetailView):
@@ -398,9 +411,6 @@ class EntryUpdateView2(LockedView, SuccessMessageMixin, UpdateView):
             order -= 1
         return order+2
     
-
-
-
 
 
 class EntryDeleteView(LockedView, SuccessMessageMixin, DeleteView):

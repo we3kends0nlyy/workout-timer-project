@@ -63,4 +63,9 @@ urlpatterns = [
         views.EntryDeleteView.as_view(),
         name="entry-delete",
     ),
+    path(
+        "workout",
+        views.WorkoutGo.as_view(),
+        name="workout",
+    ),
 ]
