@@ -4,10 +4,10 @@
         <h2 class="mark">{% now "Y-m-d H:i" %}</em></h2>
         <a href="{% url 'buildworkout' %}"><button>Add your own exercise</button></a>
         <a href="{% url 'entry-list' %}"><button>Choose a premade workout</button></a>
-        <form method="post" style="position: absolute; top: 125px; left: 820px;">
+        <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit">Start Workout!!</button>
+            <button type="submit" style="position: absolute; top: 124px; left: 850px;background-color: #007bff; color: white; padding: 9px; border: none; cursor: pointer;">Start Workout!!</button>
         </form>
     </article>
 
@@ -53,8 +53,8 @@
 <style>
     /* Style for the messages container */
     .success-message {
-        background-color: #4CAF50; /* Background color */
-        color: white; /* Text color */
+        background-color: rgb(173, 216, 230); /* Background color */
+        color: black; /* Text color */
         padding: 10px; /* Padding around messages */
         position: fixed; /* Fixed position, stays in place as you scroll */
         top: 0; /* Position from the top of the viewport */

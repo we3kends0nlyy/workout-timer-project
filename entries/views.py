@@ -49,6 +49,7 @@ class DropdownMenu(View, SuccessMessageMixin):
 
     template_name = 'buildworkout/dropdown.html'
     model = Entry
+    success_message = "Your exercise has been added to the workout!"
 
     def get(self, request, *args, **kwargs):
         form = DropdownMenuForm()
@@ -64,7 +65,7 @@ class DropdownMenu(View, SuccessMessageMixin):
         return render(request, self.template_name, {'form': form})
 
     def post(self, request, *args, **kwargs):
-
+        messages.success(self.request, self.success_message)
         form = DropdownMenuForm(request.POST)
         if form.is_valid():
             selected_option_seconds = form.cleaned_data['seconds']
@@ -86,7 +87,7 @@ class DropdownMenu(View, SuccessMessageMixin):
         return render(request, self.template_name, {'form': form})
 
 
-class DropdownUpdateMenu(View):
+class DropdownUpdateMenu(View, SuccessMessageMixin):
 
     template_name = 'entries/entry_update_times.html'
     model = Entry
@@ -111,7 +112,11 @@ class DropdownUpdateMenu(View):
             connection.commit()
             cursor.close()
             connection.execute('UPDATE entries_entry SET seconds = :seconds WHERE id = :id;', {'seconds': selected_option_seconds, 'id': self.get_id(0)})
+            item = connection.execute('SELECT exercise FROM entries_entry WHERE id = :id', {'id':self.get_id(0)})
+            workout = item.fetchone()
+            time = selected_option_seconds
             connection.commit()
+            messages.success(self.request, f"{workout[0]} has been updated to {time} seconds.")
             return redirect('entry-list')
         return render(request, self.template_name, {'form': form})
 
@@ -142,6 +147,11 @@ class DropdownUpdateMinutesMenu(View):
             connection.commit()
             cursor.close()
             connection.execute('UPDATE entries_entry SET minutes = :minutes WHERE id = :id;', {'minutes': selected_option_minutes, 'id': self.get_id(0)})
+            item = connection.execute('SELECT exercise FROM entries_entry WHERE id = :id', {'id':self.get_id(0)})
+            workout = item.fetchone()
+            time = selected_option_minutes
+            connection.commit()
+            messages.success(self.request, f"{workout[0]} has been updated to {time} seconds.")
             connection.commit()
             return redirect('entry-list')
         return render(request, self.template_name, {'form': form})
@@ -153,7 +163,6 @@ class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView):
     form_class = EntryForm
     template_name = 'buildworkout/buildworkout.html' 
     success_url = reverse_lazy("dropdown")
-
     def __init__(self) -> None:
         self.ids = []
 
@@ -221,12 +230,6 @@ class EntryListView(ListView, View):
     def post(self, request, *args, **kwargs):
         form = CheckWorkout(request.POST)
         if form.is_valid():
-            connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None)
-            cursor = connection.execute('PRAGMA foreign_keys = ON;')
-            connection.commit()
-            cursor.close()
-            num = connection.execute('SELECT COUNT(*) FROM entries_entry')
-            nums = num.fetchone()[0]
             return redirect('workout')
         return render(request, self.template_name, {'form': form})
 

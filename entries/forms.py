@@ -85,7 +85,6 @@ class CheckWorkout(forms.Form):
     exercises = forms.ChoiceField
 
     def clean(self):
-
         cleaned_data = super().clean()
         connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None)
         cursor = connection.execute('PRAGMA foreign_keys = ON;')

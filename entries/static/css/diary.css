@@ -108,7 +108,7 @@ input[type="submit"] {
 
 .message {
     width: 100%;
-    background: lightblue;
+    background: rgb(173, 216, 230);
     padding: 1rem;
     text-align: center;
     margin: 1rem 0;
