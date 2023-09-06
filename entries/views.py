@@ -22,8 +22,17 @@ from django.db import models, transaction
 from .forms import DropdownMenuForm, DropdownUpdateMinutesMenuForm, DropdownUpdateSecondsMenuForm, CheckWorkout
 from .models import Entry
 import sqlite3
+from django.http import JsonResponse
+from .models import Entry
 
-
+def get_exercise_data(request):
+    exercises = Entry.objects.all()
+    exercise_data = [
+        {'exercise': exercise.exercise, 'time': int(exercise.seconds) + int(exercise.minutes * 60), 'order_in_workout': exercise.order_in_workout}
+        for exercise in exercises
+    ]
+    exercise_data = sorted(exercise_data, key=lambda x: x['order_in_workout'])
+    return JsonResponse({'exerciseData': exercise_data})
 
 class EntryForm(forms.ModelForm):
     class Meta:
@@ -31,12 +40,12 @@ class EntryForm(forms.ModelForm):
         fields = ["exercise", "order_in_workout"]
         
         labels = {
-            "exercise": "Exercise/Activity",
+            "exercise": "Exercise/Activity/Break",
             "order_in_workout": "Order in workout",
         }
         
         help_texts = {
-            "exercise": "Enter your exercise or break activity here.",
+            "exercise": "Enter whatever exercise you wish! Remember that breaks are very important while working out, so be sure to add some time for them as well!",
             "order_in_workout": "Enter the order in the workout you want this exercise to be. For example if your workout so far is: 1. Push ups 2. Squats 3. Crunches, you can add some sit ups in order place 1, 2, 3, or 4!"
         }
 
@@ -65,7 +74,6 @@ class DropdownMenu(View, SuccessMessageMixin):
         return render(request, self.template_name, {'form': form})
 
     def post(self, request, *args, **kwargs):
-        messages.success(self.request, self.success_message)
         form = DropdownMenuForm(request.POST)
         if form.is_valid():
             selected_option_seconds = form.cleaned_data['seconds']
@@ -76,13 +84,17 @@ class DropdownMenu(View, SuccessMessageMixin):
             cursor = connection.execute('PRAGMA foreign_keys = ON;')
             connection.commit()
             cursor.close()
-            exercise = connection.execute('SELECT exercise FROM entries_entry ORDER BY id DESC LIMIT 1;')
-            exercise_type = exercise.fetchone()[0]
-            connection.execute('UPDATE entries_entry SET seconds = :seconds WHERE exercise = :exercise;', {'seconds': selected_option_seconds, 'exercise': exercise_type})
-            connection.execute('UPDATE entries_entry SET minutes = :minutes WHERE exercise = :exercise;', {'minutes': selected_option_minutes, 'exercise': exercise_type})
+            exercise = connection.execute('SELECT exercise, id FROM entries_entry ORDER BY id DESC LIMIT 1;')
+            exercise_type = exercise.fetchone()
+
+            order = connection.execute('SELECT order_in_workout FROM entries_entry WHERE id = :id;', {'id': exercise_type[1]})
+            order_num = order.fetchone()
+
+            connection.execute('UPDATE entries_entry SET seconds = :seconds WHERE exercise = :exercise;', {'seconds': selected_option_seconds, 'exercise': exercise_type[0]})
+            connection.execute('UPDATE entries_entry SET minutes = :minutes WHERE exercise = :exercise;', {'minutes': selected_option_minutes, 'exercise': exercise_type[0]})
             connection.commit()
 
-
+            messages.success(self.request, f"{exercise_type[0]} has been added to the workout at order #{order_num[0]}!")
             return redirect('entry-list')
         return render(request, self.template_name, {'form': form})
 
@@ -182,6 +194,7 @@ class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView):
                 cursor.execute('SELECT COUNT(*) FROM entries_entry')
                 num_of_exercises = cursor.fetchone()
                 if new_order_of_workout > num_of_exercises[0]:
+                    new_order_of_workout = num_of_exercises[0] + 1
                     form.instance.order_in_workout = num_of_exercises[0] + 1
                     form.save(commit=False)
         return super().form_valid(form)
@@ -233,8 +246,13 @@ class EntryListView(ListView, View):
             return redirect('workout')
         return render(request, self.template_name, {'form': form})
 
-class WorkoutGo(View):
+class WorkoutGo(View, SuccessMessageMixin):
+    model = Entry
     template_name = 'entries/workout.html'
+    def get(self, request, *args, **kwargs):
+        form = DropdownMenuForm()
+        return render(request, self.template_name, {'form': form})
+
 
 
 class EntryDetailView(LockedView, DetailView):
@@ -425,7 +443,6 @@ class EntryDeleteView(LockedView, SuccessMessageMixin, DeleteView):
     result = True
 
     def delete(self, request, *args, **kwargs):
-        messages.success(self.request, self.success_message)
         with sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None) as connection:
             connection.execute('PRAGMA foreign_keys = ON;')
             cursor = connection.cursor()
@@ -440,6 +457,7 @@ class EntryDeleteView(LockedView, SuccessMessageMixin, DeleteView):
                     cursor.close()
                     break
                     result = None
+        messages.success(self.request, self.success_message)
         cursor.close()
         return super().delete(request, *args, **kwargs)
 

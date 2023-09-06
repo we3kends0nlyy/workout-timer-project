@@ -68,4 +68,8 @@ urlpatterns = [
         views.WorkoutGo.as_view(),
         name="workout",
     ),
+    path(
+        'get-exercise-data/',
+        views.get_exercise_data,
+        name='get-exercise-data'),
 ]
