@@ -431,13 +431,13 @@ class EntryUpdateView2(LockedView, SuccessMessageMixin, UpdateView):
             connection.commit()
             order -= 1
         return order+2
-    
+
 
 
 class EntryDeleteView(LockedView, SuccessMessageMixin, DeleteView):
     model = Entry
     success_url = reverse_lazy("entry-list")
-    success_message = "Your exercise was deleted from the workout!"
+    success_message = "Your exercise/break was deleted from the workout!"
     self_object = None
     current_order = None
     result = True
