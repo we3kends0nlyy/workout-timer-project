@@ -131,8 +131,7 @@ class DropdownUpdateMenu(View, SuccessMessageMixin):
             messages.success(self.request, f"{workout[0]} has been updated to {time} seconds.")
             return redirect('entry-list')
         return render(request, self.template_name, {'form': form})
-
-
+#WHEN UPDATING A TIME, CHECK TO SEE IF THE OTHER ONE HAS A TIME MORE THAN ZERO SO THE ERROR DOESN'T COME UP IN THE WRONG PLACE###
 class DropdownUpdateMinutesMenu(View):
 
     template_name = 'entries/entry_update_times_minutes.html'

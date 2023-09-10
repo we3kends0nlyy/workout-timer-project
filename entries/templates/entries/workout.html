@@ -41,6 +41,7 @@
         <div class="text" id="countdown">5</div>
         <div class="container" id="exercise-container" style="display: none;">
             <div class="exercise-text" id="exercise-name">Exercise Name</div>
+            <div class="exercise-text" id="next-exercise-name">Next Exercise: Exercise Name</div>
             <div class="timer-text" id="total-time">Total Time Remaining: 00:00</div>
             <div class="timer-text" id="exercise-timer">Exercise Time Remaining: 00:00</div>
         </div>
@@ -95,17 +96,24 @@
                     let currentTime = totalTime;
 
                     function displayExercise() {
+                        
                         if (currentIndex < exerciseData.length) {
                             const exerciseNameElement = document.getElementById('exercise-name');
                             const exerciseTimeElement = document.getElementById('exercise-time');
                             const totalTimeElement = document.getElementById('total-time');
                             const exerciseTimerElement = document.getElementById('exercise-timer');
+                            const nextExerciseNameElement = document.getElementById('next-exercise-name');
 
                             const exercise = exerciseData[currentIndex];
                             exerciseNameElement.textContent = `Exercise: ${(exercise.exercise)}`;
                             totalTimeElement.textContent = `Total Time Remaining: ${formatTime(currentTime)}`;
                             exerciseTimerElement.textContent = `Exercise Time Remaining: ${formatTime(exercise.time)}`;
 
+                            if (currentIndex + 1 < exerciseData.length) {
+                                    nextExerciseNameElement.textContent = `Next Up: ${exerciseData[currentIndex + 1].exercise}`;
+                                } else {
+                                    nextExerciseNameElement.textContent = "Last One!!";
+                                }
                             const exerciseInterval = setInterval(function () {
                                 exercise.time--; // Decrease the time for the current exercise
                                 currentTime--; // Decrease the total time remaining
@@ -117,7 +125,8 @@
                                     clearInterval(exerciseInterval);
                                     currentIndex++;
                                     if (currentIndex < exerciseData.length) {
-                                        totalTimeElement.textContent = `Next exercise/break loading...Get in position!!`;
+                                        exerciseNameElement.textContent = `Exercise Done!`;
+                                        totalTimeElement.textContent = `Your exercise/break is loading...Get in position!!`;
                                         setTimeout(displayExercise, 5000);
                                     } else {
                                         // All exercises have been displayed
