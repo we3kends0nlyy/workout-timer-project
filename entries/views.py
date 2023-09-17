@@ -1,9 +1,6 @@
-from typing import Any, Dict, Optional
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.forms.forms import BaseForm
-from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
 from django.views.generic import (
@@ -17,8 +14,6 @@ from django.views.generic import (
 from django.http import JsonResponse
 from django.contrib import messages
 from django import forms
-from django.db.utils import OperationalError
-from django.db import models, transaction
 from .forms import DropdownMenuForm, DropdownUpdateMinutesMenuForm, DropdownUpdateSecondsMenuForm, CheckWorkout
 from .models import Entry
 import sqlite3
@@ -116,22 +111,31 @@ class DropdownUpdateMenu(View, SuccessMessageMixin):
         return self.kwargs['id']
 
     def post(self, request, *args, **kwargs):
+        connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None)
+        minutes = connection.execute('SELECT minutes FROM entries_entry WHERE id = :id', {'id':self.get_id(0)})
+        mins = minutes.fetchone()
+        connection.commit()
         form = DropdownUpdateSecondsMenuForm(request.POST)
         if form.is_valid():
             selected_option_seconds = form.cleaned_data['seconds']
-            connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None)
-            cursor = connection.execute('PRAGMA foreign_keys = ON;')
-            connection.commit()
-            cursor.close()
-            connection.execute('UPDATE entries_entry SET seconds = :seconds WHERE id = :id;', {'seconds': selected_option_seconds, 'id': self.get_id(0)})
-            item = connection.execute('SELECT exercise FROM entries_entry WHERE id = :id', {'id':self.get_id(0)})
-            workout = item.fetchone()
-            time = selected_option_seconds
-            connection.commit()
-            messages.success(self.request, f"{workout[0]} has been updated to {time} seconds.")
-            return redirect('entry-list')
+            if mins[0] == "0" and selected_option_seconds == "0":
+                messages.error(self.request, 'You cannot change seconds to 0 when minutes is already 0.')
+                return redirect('entry-list')
+            else:
+                connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None)
+                cursor = connection.execute('PRAGMA foreign_keys = ON;')
+                connection.commit()
+                cursor.close()
+                connection.execute('UPDATE entries_entry SET seconds = :seconds WHERE id = :id;', {'seconds': selected_option_seconds, 'id': self.get_id(0)})
+                item = connection.execute('SELECT exercise FROM entries_entry WHERE id = :id', {'id':self.get_id(0)})
+                workout = item.fetchone()
+                time = selected_option_seconds
+                connection.commit()
+                messages.success(self.request, f"{workout[0]} has been updated to {time} seconds.")
+                connection.commit()
+                return redirect('entry-list')
         return render(request, self.template_name, {'form': form})
-#WHEN UPDATING A TIME, CHECK TO SEE IF THE OTHER ONE HAS A TIME MORE THAN ZERO SO THE ERROR DOESN'T COME UP IN THE WRONG PLACE###
+
 class DropdownUpdateMinutesMenu(View):
 
     template_name = 'entries/entry_update_times_minutes.html'
@@ -150,21 +154,29 @@ class DropdownUpdateMinutesMenu(View):
 
 
     def post(self, request, *args, **kwargs):
+        connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None)
+        seconds = connection.execute('SELECT seconds FROM entries_entry WHERE id = :id', {'id':self.get_id(0)})
+        secs = seconds.fetchone()
+        connection.commit()
         form = DropdownUpdateMinutesMenuForm(request.POST)
         if form.is_valid():
             selected_option_minutes = form.cleaned_data['minutes']
-            connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None)
-            cursor = connection.execute('PRAGMA foreign_keys = ON;')
-            connection.commit()
-            cursor.close()
-            connection.execute('UPDATE entries_entry SET minutes = :minutes WHERE id = :id;', {'minutes': selected_option_minutes, 'id': self.get_id(0)})
-            item = connection.execute('SELECT exercise FROM entries_entry WHERE id = :id', {'id':self.get_id(0)})
-            workout = item.fetchone()
-            time = selected_option_minutes
-            connection.commit()
-            messages.success(self.request, f"{workout[0]} has been updated to {time} seconds.")
-            connection.commit()
-            return redirect('entry-list')
+            if secs[0] == "0" and selected_option_minutes == "0":
+                messages.error(self.request, f"You cannot change minutes to 0 when seconds is already 0.")
+                return redirect('entry-list')
+            else:
+                connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None)
+                cursor = connection.execute('PRAGMA foreign_keys = ON;')
+                connection.commit()
+                cursor.close()
+                connection.execute('UPDATE entries_entry SET minutes = :minutes WHERE id = :id;', {'minutes': selected_option_minutes, 'id': self.get_id(0)})
+                item = connection.execute('SELECT exercise FROM entries_entry WHERE id = :id', {'id':self.get_id(0)})
+                workout = item.fetchone()
+                time = selected_option_minutes
+                connection.commit()
+                messages.success(self.request, f"{workout[0]} has been updated to {time} minutes.")
+                connection.commit()
+                return redirect('entry-list')
         return render(request, self.template_name, {'form': form})
 
 

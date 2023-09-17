@@ -55,10 +55,6 @@ class DropdownUpdateSecondsMenuForm(forms.Form):
         cleaned_data = super().clean()
         seconds = int(cleaned_data.get('seconds', 0))
 
-        if seconds == 0:
-            raise ValidationError("Please choose a time greater than zero.")
-    
-
 
 class DropdownUpdateMinutesMenuForm(forms.Form):
     minutes = forms.ChoiceField(choices=[(0, '0'), (1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5'), 
@@ -78,8 +74,8 @@ class DropdownUpdateMinutesMenuForm(forms.Form):
         cleaned_data = super().clean()
         minutes = int(cleaned_data.get('minutes', 0))
 
-        if minutes == 0:
-            raise ValidationError("Please choose a time greater than zero.")
+        #if minutes == 0:
+            #raise ValidationError("Please choose a time greater than zero.")
 
 class CheckWorkout(forms.Form):
     exercises = forms.ChoiceField
