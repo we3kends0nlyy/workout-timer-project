@@ -72,4 +72,8 @@ urlpatterns = [
         'get-exercise-data/',
         views.get_exercise_data,
         name='get-exercise-data'),
+    path(
+        'choose-prev',
+        views.ChooseWorkout.as_view(),
+        name='choose-prev'),
 ]

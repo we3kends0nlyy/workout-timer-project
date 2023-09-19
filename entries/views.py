@@ -15,10 +15,11 @@ from django.http import JsonResponse
 from django.contrib import messages
 from django import forms
 from .forms import DropdownMenuForm, DropdownUpdateMinutesMenuForm, DropdownUpdateSecondsMenuForm, CheckWorkout
-from .models import Entry
+from .models import Entry, ExistingEntry1, ExistingEntry2, ExistingEntry3, ExistingEntry4, ExistingEntry5
 import sqlite3
 from django.http import JsonResponse
 from .models import Entry
+
 
 def get_exercise_data(request):
     exercises = Entry.objects.all()
@@ -28,6 +29,29 @@ def get_exercise_data(request):
     ]
     exercise_data = sorted(exercise_data, key=lambda x: x['order_in_workout'])
     return JsonResponse({'exerciseData': exercise_data})
+
+class ChooseWorkout(View):
+    template_name = 'entries/choose_prev.html'
+
+    def get(self, request, *args, **kwargs):
+        # Query data from all models and order them as needed
+        entry_data = Entry.objects.all().order_by('order_in_workout')
+        existing_entry1 = ExistingEntry1.objects.all().order_by('order_in_workout')
+        existing_entry2 = ExistingEntry2.objects.all().order_by('order_in_workout')
+        existing_entry3 = ExistingEntry3.objects.all().order_by('order_in_workout')
+        existing_entry4 = ExistingEntry4.objects.all().order_by('order_in_workout')
+        existing_entry5 = ExistingEntry5.objects.all().order_by('order_in_workout')
+        print(existing_entry1)
+        context = {
+            'entry_data': entry_data,
+            'existing_entry1': existing_entry1,
+            'existing_entry2': existing_entry2,
+            'existing_entry3': existing_entry3,
+            'existing_entry4': existing_entry4,
+            'existing_entry5': existing_entry5,
+        }
+
+        return render(request, self.template_name, context)
 
 class EntryForm(forms.ModelForm):
     class Meta:
@@ -262,6 +286,19 @@ class WorkoutGo(View, SuccessMessageMixin):
     template_name = 'entries/workout.html'
     def get(self, request, *args, **kwargs):
         form = DropdownMenuForm()
+        connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None)
+        connection.execute('DELETE FROM entries_existingentry5;')
+        connection.execute('INSERT INTO entries_existingentry5 (exercise, order_in_workout, seconds, minutes) SELECT exercise, order_in_workout, seconds, minutes FROM entries_existingentry4;')
+        connection.execute('DELETE FROM entries_existingentry4;')
+        connection.execute('INSERT INTO entries_existingentry4 (exercise, order_in_workout, seconds, minutes) SELECT exercise, order_in_workout, seconds, minutes FROM entries_existingentry3;')
+        connection.execute('DELETE FROM entries_existingentry3;')
+        connection.execute('INSERT INTO entries_existingentry3 (exercise, order_in_workout, seconds, minutes) SELECT exercise, order_in_workout, seconds, minutes FROM entries_existingentry2;')
+        connection.execute('DELETE FROM entries_existingentry2;')
+        connection.execute('INSERT INTO entries_existingentry2 (exercise, order_in_workout, seconds, minutes) SELECT exercise, order_in_workout, seconds, minutes FROM entries_existingentry1;')
+        connection.execute('DELETE FROM entries_existingentry1;')
+        connection.execute('INSERT INTO entries_existingentry1 (exercise, order_in_workout, seconds, minutes) SELECT exercise, order_in_workout, seconds, minutes FROM entries_entry;')
+        connection.execute('DELETE FROM entries_entry;')
+        connection.commit()
         return render(request, self.template_name, {'form': form})
 
 

@@ -1,0 +1,217 @@
+{% extends "entries/base.html" %}
+{% load static %}
+{% block content %}
+    <head>
+        <!-- Add the link to your CSS file here -->
+        <link rel="stylesheet" type="text/css" href="{% static 'css/choose_prev.css' %}">
+    </head>
+    <article>
+        ###MAKE A DROPDOWN MENU THAT HAS THE OPTIONS FOR WORKOUT 1, 2, 3, 4, 5. WHEN THE USER CHOOSES ONE, LOAD THAT WORKOUT INTO ENTRIES_ENTRY.
+        MAYBE MAKE IT SO THAT WHEN THE WORKOUT HAS NOTHING IN IT THERE IS AN ERROR MESSAGE, BUT FOR NOW DO THE FIRST STEP.R
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+        </form>
+    </article>
+
+    Workout 1
+    {% for entry in existing_entry1 %}
+         <article>
+             <h3>
+                    <span class="small-font">{{ "Order in workout: "}}{{ entry.order_in_workout }}</span>
+                </a>
+           </h3>
+                <h3>
+                        <span class="small-font">{{ "Exercise: "}}{{ entry.exercise }}</span>
+                    </a>
+                </h3>
+                <h3>
+                    <style>
+                        .time-values {
+                            margin-right: 5px;
+                        }
+                    </style>
+                    
+                        <span class="small-font">{{ "Minutes: " }}{{ entry.minutes }}</span>
+                        <span class="small-font">{{ "Seconds: " }}{{ entry.seconds }}</span>
+                    </a>
+            </h3>
+        </article>
+    {% empty %}
+        <p>Empty</p>
+    {% endfor %}
+    <br>
+    <br>
+    Workout 2
+    {% for entry in existing_entry2 %}
+         <article>
+             <h3>
+                    <span class="small-font">{{ "Order in workout: "}}{{ entry.order_in_workout }}</span>
+                </a>
+           </h3>
+                <h3>
+                        <span class="small-font">{{ "Exercise: "}}{{ entry.exercise }}</span>
+                    </a>
+                </h3>
+                <h3>
+                    <style>
+                        .time-values {
+                            margin-right: 5px;
+                        }
+                    </style>
+                    
+                        <span class="small-font">{{ "Minutes: " }}{{ entry.minutes }}</span>
+                        <span class="small-font">{{ "Seconds: " }}{{ entry.seconds }}</span>
+                    </a>
+            </h3>
+        </article>
+    {% empty %}
+        <p>Empty</p>
+    {% endfor %}
+    <br>
+    <br>
+    Workout 3
+    {% for entry in existing_entry3 %}
+         <article>
+             <h3>
+                    <span class="small-font">{{ "Order in workout: "}}{{ entry.order_in_workout }}</span>
+                </a>
+           </h3>
+                <h3>
+                        <span class="small-font">{{ "Exercise: "}}{{ entry.exercise }}</span>
+                    </a>
+                </h3>
+                <h3>
+                    <style>
+                        .time-values {
+                            margin-right: 5px;
+                        }
+                    </style>
+                    
+                        <span class="small-font">{{ "Minutes: " }}{{ entry.minutes }}</span>
+                        <span class="small-font">{{ "Seconds: " }}{{ entry.seconds }}</span>
+                    </a>
+            </h3>
+        </article>
+    {% empty %}
+        <p>Empty</p>
+    {% endfor %}
+    <br>
+    <br>
+    Workout 4
+    {% for entry in existing_entry4 %}
+         <article>
+             <h3>
+                    <span class="small-font">{{ "Order in workout: "}}{{ entry.order_in_workout }}</span>
+                </a>
+           </h3>
+                <h3>
+                        <span class="small-font">{{ "Exercise: "}}{{ entry.exercise }}</span>
+                    </a>
+                </h3>
+                <h3>
+                    <style>
+                        .time-values {
+                            margin-right: 5px;
+                        }
+                    </style>
+                    
+                        <span class="small-font">{{ "Minutes: " }}{{ entry.minutes }}</span>
+                        <span class="small-font">{{ "Seconds: " }}{{ entry.seconds }}</span>
+                    </a>
+            </h3>
+        </article>
+    {% empty %}
+        <p>Empty</p>
+    {% endfor %}
+    <br>
+    <br>
+    Workout 5
+    {% for entry in existing_entry5 %}
+         <article>
+             <h3>
+                    <span class="small-font">{{ "Order in workout: "}}{{ entry.order_in_workout }}</span>
+                </a>
+           </h3>
+                <h3>
+                        <span class="small-font">{{ "Exercise: "}}{{ entry.exercise }}</span>
+                    </a>
+                </h3>
+                <h3>
+                    <style>
+                        .time-values {
+                            margin-right: 5px;
+                        }
+                    </style>
+                    
+                        <span class="small-font">{{ "Minutes: " }}{{ entry.minutes }}</span>
+                        <span class="small-font">{{ "Seconds: " }}{{ entry.seconds }}</span>
+                    </a>
+            </h3>
+        </article>
+    {% empty %}
+        <p>Empty</p>
+    {% endfor %}
+
+    
+
+    {% if form.errors %}
+    <div class="error-message">
+        <ul>
+            {% for field in form %}
+                {% if field.errors %}
+                    <li> {{ field.errors.0 }}</li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+<style>
+    /* Style for the messages container */
+    .success-message {
+        background-color: rgb(173, 216, 230); /* Background color */
+        color: black; /* Text color */
+        padding: 10px; /* Padding around messages */
+        position: fixed; /* Fixed position, stays in place as you scroll */
+        top: 0; /* Position from the top of the viewport */
+        left: 50%; /* Center horizontally */
+        transform: translateX(-50%); /* Center horizontally */
+        width: 80%; /* Width of the container */
+        text-align: center; /* Center-align text */
+        z-index: 1000; /* Set a high z-index to ensure it's on top of other content */
+    }
+
+    /* Style for individual messages */
+    .success-message p {
+        margin: 5px 0; /* Spacing between individual messages */
+    }
+
+    .error-message {
+        background-color: rgb(232, 5, 5); /* Background color */
+        color: black; /* Text color */
+        padding: 10px; /* Padding around messages */
+        position: fixed; /* Fixed position, stays in place as you scroll */
+        top: 0; /* Position from the top of the viewport */
+        left: 50%; /* Center horizontally */
+        transform: translateX(-50%); /* Center horizontally */
+        width: 80%; /* Width of the container */
+        text-align: center; /* Center-align text */
+        z-index: 1000; /* Set a high z-index to ensure it's on top of other content */
+    }
+
+    /* Style for individual messages */
+    .error-message p {
+        margin: 5px 0; /* Spacing between individual messages */
+    }
+</style>
+{% if messages %}
+        {% for message in messages %}
+        <div class="{% if message.tags == 'error' %}error-message{% elif message.tags == 'success' %}success-message{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+{% endif %}
+
+
+{% endblock %}
