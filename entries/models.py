@@ -70,3 +70,14 @@ class ExistingEntry5(models.Model):
 
     def __str__(self):
         return self.exercise
+    
+
+class GoWorkout(models.Model):
+    id = models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')
+    exercise = models.CharField(max_length=200)
+    order_in_workout = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(1000)])
+    seconds = models.CharField(max_length=30)
+    minutes = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.exercise

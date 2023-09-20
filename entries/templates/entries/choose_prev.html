@@ -1,17 +1,18 @@
 {% extends "entries/base.html" %}
 {% load static %}
 {% block content %}
+    <article>
+        <h3>{{ "Here are your previous five workouts. Selecting one will clear and replace the exercises in your current workout. <br> Once loaded in, the exercises can be edited as normal!" }}</h3>
+    </article>
     <head>
         <!-- Add the link to your CSS file here -->
         <link rel="stylesheet" type="text/css" href="{% static 'css/choose_prev.css' %}">
     </head>
     <article>
-        ###MAKE A DROPDOWN MENU THAT HAS THE OPTIONS FOR WORKOUT 1, 2, 3, 4, 5. WHEN THE USER CHOOSES ONE, LOAD THAT WORKOUT INTO ENTRIES_ENTRY.
-        MAYBE MAKE IT SO THAT WHEN THE WORKOUT HAS NOTHING IN IT THERE IS AN ERROR MESSAGE, BUT FOR NOW DO THE FIRST STEP.R
-
         <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
+            <button type="submit">Load the workout!</button>
         </form>
     </article>
 

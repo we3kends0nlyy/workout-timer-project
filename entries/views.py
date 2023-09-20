@@ -14,15 +14,15 @@ from django.views.generic import (
 from django.http import JsonResponse
 from django.contrib import messages
 from django import forms
-from .forms import DropdownMenuForm, DropdownUpdateMinutesMenuForm, DropdownUpdateSecondsMenuForm, CheckWorkout
-from .models import Entry, ExistingEntry1, ExistingEntry2, ExistingEntry3, ExistingEntry4, ExistingEntry5
+from .forms import DropdownMenuForm, DropdownUpdateMinutesMenuForm, DropdownUpdateSecondsMenuForm, CheckWorkout, ChoosePrevWorkout
+from .models import Entry, ExistingEntry1, ExistingEntry2, ExistingEntry3, ExistingEntry4, ExistingEntry5, GoWorkout
 import sqlite3
 from django.http import JsonResponse
 from .models import Entry
 
 
 def get_exercise_data(request):
-    exercises = Entry.objects.all()
+    exercises = GoWorkout.objects.all()
     exercise_data = [
         {'exercise': exercise.exercise, 'time': int(exercise.seconds) + int(exercise.minutes * 60), 'order_in_workout': exercise.order_in_workout}
         for exercise in exercises
@@ -34,14 +34,15 @@ class ChooseWorkout(View):
     template_name = 'entries/choose_prev.html'
 
     def get(self, request, *args, **kwargs):
-        # Query data from all models and order them as needed
         entry_data = Entry.objects.all().order_by('order_in_workout')
         existing_entry1 = ExistingEntry1.objects.all().order_by('order_in_workout')
         existing_entry2 = ExistingEntry2.objects.all().order_by('order_in_workout')
         existing_entry3 = ExistingEntry3.objects.all().order_by('order_in_workout')
         existing_entry4 = ExistingEntry4.objects.all().order_by('order_in_workout')
         existing_entry5 = ExistingEntry5.objects.all().order_by('order_in_workout')
-        print(existing_entry1)
+
+        form = ChoosePrevWorkout()
+
         context = {
             'entry_data': entry_data,
             'existing_entry1': existing_entry1,
@@ -49,9 +50,36 @@ class ChooseWorkout(View):
             'existing_entry3': existing_entry3,
             'existing_entry4': existing_entry4,
             'existing_entry5': existing_entry5,
+            'form': form,
         }
 
+
         return render(request, self.template_name, context)
+    def post(self, request, *args, **kwargs):
+        connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None)
+        form = ChoosePrevWorkout(request.POST)
+        if form.is_valid():
+            workout_choice = form.cleaned_data['workouts']
+            connection.execute('DELETE FROM entries_entry;')
+            connection.execute(f"INSERT INTO entries_entry (exercise, order_in_workout, seconds, minutes) SELECT exercise, order_in_workout, seconds, minutes FROM entries_existingentry{workout_choice};")
+            '''
+            if workout_choice == 1:
+                connection.execute('DELETE FROM entries_entry;')
+                connection.execute(f"INSERT INTO entries_entry (exercise, order_in_workout, seconds, minutes) SELECT exercise, order_in_workout, seconds, minutes FROM entries_existingentry{workout_choice};")
+                existing_entry1 = ExistingEntry1.objects.all().order_by('order_in_workout')
+            elif workout_choice == 2:
+                existing_entry2 = ExistingEntry2.objects.all().order_by('order_in_workout')
+            elif workout_choice == 3:
+                existing_entry3 = ExistingEntry3.objects.all().order_by('order_in_workout')
+            elif workout_choice == 4:
+                existing_entry4 = ExistingEntry4.objects.all().order_by('order_in_workout')
+            elif workout_choice == 5:
+                existing_entry5 = ExistingEntry5.objects.all().order_by('order_in_workout')
+            '''
+            connection.commit()
+            return redirect('entry-list')
+        return render(request, self.template_name, {'form': form})
+
 
 class EntryForm(forms.ModelForm):
     class Meta:
@@ -297,6 +325,8 @@ class WorkoutGo(View, SuccessMessageMixin):
         connection.execute('INSERT INTO entries_existingentry2 (exercise, order_in_workout, seconds, minutes) SELECT exercise, order_in_workout, seconds, minutes FROM entries_existingentry1;')
         connection.execute('DELETE FROM entries_existingentry1;')
         connection.execute('INSERT INTO entries_existingentry1 (exercise, order_in_workout, seconds, minutes) SELECT exercise, order_in_workout, seconds, minutes FROM entries_entry;')
+        connection.execute('DELETE FROM entries_goworkout;')
+        connection.execute('INSERT INTO entries_goworkout (exercise, order_in_workout, seconds, minutes) SELECT exercise, order_in_workout, seconds, minutes FROM entries_entry;')
         connection.execute('DELETE FROM entries_entry;')
         connection.commit()
         return render(request, self.template_name, {'form': form})

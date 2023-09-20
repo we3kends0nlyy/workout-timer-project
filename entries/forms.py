@@ -90,3 +90,10 @@ class CheckWorkout(forms.Form):
         nums = num.fetchone()[0]
         if nums == 0:
             raise ValidationError("You must add an exercise to the workout before starting!")
+        
+
+class ChoosePrevWorkout(forms.Form):
+    workouts = forms.ChoiceField(choices=[("1", 'Workout 1'), ("2", 'Workout 2'), ("3", 'Workout 3'), ("4", 'Workout 4'), ("5", 'Workout 5')])
+    def clean(self):
+        cleaned_data = super().clean()
+        workouts = int(cleaned_data.get('workouts', 0))
