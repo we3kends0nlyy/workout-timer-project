@@ -1,7 +1,6 @@
 {% extends "entries/base.html" %}
 {% block content %}
     <article>
-        <h2 class="mark">{% now "Y-m-d H:i" %}</em></h2>
         <a href="{% url 'buildworkout' %}"><button>Add your own exercise/break</button></a>
         <a href="{% url 'choose-prev' %}"><button>Choose from your previous 5 workouts</button></a>
         <form method="post">
