@@ -62,20 +62,6 @@ class ChooseWorkout(View):
             workout_choice = form.cleaned_data['workouts']
             connection.execute('DELETE FROM entries_entry;')
             connection.execute(f"INSERT INTO entries_entry (exercise, order_in_workout, seconds, minutes) SELECT exercise, order_in_workout, seconds, minutes FROM entries_existingentry{workout_choice};")
-            '''
-            if workout_choice == 1:
-                connection.execute('DELETE FROM entries_entry;')
-                connection.execute(f"INSERT INTO entries_entry (exercise, order_in_workout, seconds, minutes) SELECT exercise, order_in_workout, seconds, minutes FROM entries_existingentry{workout_choice};")
-                existing_entry1 = ExistingEntry1.objects.all().order_by('order_in_workout')
-            elif workout_choice == 2:
-                existing_entry2 = ExistingEntry2.objects.all().order_by('order_in_workout')
-            elif workout_choice == 3:
-                existing_entry3 = ExistingEntry3.objects.all().order_by('order_in_workout')
-            elif workout_choice == 4:
-                existing_entry4 = ExistingEntry4.objects.all().order_by('order_in_workout')
-            elif workout_choice == 5:
-                existing_entry5 = ExistingEntry5.objects.all().order_by('order_in_workout')
-            '''
             connection.commit()
             return redirect('entry-list')
         return render(request, self.template_name, {'form': form})

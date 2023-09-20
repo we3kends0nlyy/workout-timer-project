@@ -19,12 +19,12 @@
                 <article>
                     <h3>
                         <a href="{% url 'entryorder-detail' entry.id %}">
-                            {{ "Order in workout: "}}{{ entry.order_in_workout }}
+                            <span class="small-font" style="font-size: 31px; color: #C85656; font-family: Averia Sans Libre;">{{ "Order in workout: "}}</span> <span class="small-font" style="font-size: 24px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.order_in_workout }}</span>
                         </a>
                 </h3>
                         <h3>
                             <a href="{% url 'entry-detail' entry.id %}">
-                                {{ "Exercise: "}}{{ entry.exercise }}
+                                <span class="small-font" style="font-size: 31px; color: #C85656; font-family: Averia Sans Libre;">{{ "Exercise: "}}</span> <span class="small-font" style="font-size: 24px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.exercise }}</span>
                             </a>
                         </h3>
                         <h3>
@@ -35,8 +35,8 @@
                             </style>
                             
                             <a href="{% url 'entrytime-detail' entry.id %}">
-                                <span class="time-values">{{ "Minutes: " }}{{ entry.minutes }}</span>
-                                <span>{{ "Seconds: " }}{{ entry.seconds }}</span>
+                                <span class="small-font" style="font-size: 31px; color: #C85656; font-family: Averia Sans Libre;">{{ "Minutes: "}}</span> <span class="small-font" style="font-size: 24px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.minutes }}</span>
+                                <span class="small-font" style="font-size: 31px; color: #C85656; font-family: Averia Sans Libre;">{{ "Seconds: "}}</span> <span class="small-font" style="font-size: 24px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.seconds }}</span>
                             </a>
                     </h3>
                 </article>
