@@ -85,15 +85,14 @@ class EntryForm(forms.ModelForm):
     class Meta:
         model = Entry
         fields = ["exercise", "order_in_workout"]
-        
+
         labels = {
             "exercise": "Exercise/Activity/Break",
             "order_in_workout": "Order in workout",
         }
-        
+
         help_texts = {
-            "exercise": "Enter whatever exercise you wish! Remember that breaks are very important while working out, so be sure to add some time for them as well!",
-            "order_in_workout": "Enter the order in the workout you want this exercise to be. For example if your workout so far is: 1. Push ups 2. Squats 3. Crunches, you can add some sit ups in order place 1, 2, 3, or 4!"
+
         }
 
 

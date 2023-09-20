@@ -1,42 +1,50 @@
 {% extends "entries/base.html" %}
 {% block content %}
     <article>
-        <a href="{% url 'buildworkout' %}"><button>Add your own exercise/break</button></a>
-        <a href="{% url 'choose-prev' %}"><button>Choose from your previous 5 workouts</button></a>
+        <div class="buttons">
+            <a href="{% url 'buildworkout' %}"><button id="add-button">Add your own exercise/break</button></a>
+            <a href="{% url 'choose-prev' %}"><button id="choose-button">Choose from your previous 5 workouts</button></a>
+        </div>
         <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit" style="position: absolute; top: 124px; left: 1040px;background-color: #007bff; color: white; padding: 9px; border: none; cursor: pointer;">Start Workout!!</button>
+            <button type="submit" id="start-button">Start Workout!!</button>
         </form>
     </article>
 
-
-    {% for entry in entry_list %}
-         <article>
-             <h3>
-                <a href="{% url 'entryorder-detail' entry.id %}">
-                    {{ "Order in workout: "}}{{ entry.order_in_workout }}
-                </a>
-           </h3>
-                <h3>
-                    <a href="{% url 'entry-detail' entry.id %}">
-                        {{ "Exercise: "}}{{ entry.exercise }}
-                    </a>
+    <div class="workout-list">
+        <ul id="exers">
+            <h1 style= "font-size: 45px;">Your Workout</h1>
+            {% for entry in entry_list %}
+                <article>
+                    <h3>
+                        <a href="{% url 'entryorder-detail' entry.id %}">
+                            {{ "Order in workout: "}}{{ entry.order_in_workout }}
+                        </a>
                 </h3>
-                <h3>
-                    <style>
-                        .time-values {
-                            margin-right: 10px;
-                        }
-                    </style>
-                    
-                    <a href="{% url 'entrytime-detail' entry.id %}">
-                        <span class="time-values">{{ "Minutes: " }}{{ entry.minutes }}</span>
-                        <span>{{ "Seconds: " }}{{ entry.seconds }}</span>
-                    </a>
-            </h3>
-        </article>
-    {% endfor %}
+                        <h3>
+                            <a href="{% url 'entry-detail' entry.id %}">
+                                {{ "Exercise: "}}{{ entry.exercise }}
+                            </a>
+                        </h3>
+                        <h3>
+                            <style>
+                                .time-values {
+                                    margin-right: 10px;
+                                }
+                            </style>
+                            
+                            <a href="{% url 'entrytime-detail' entry.id %}">
+                                <span class="time-values">{{ "Minutes: " }}{{ entry.minutes }}</span>
+                                <span>{{ "Seconds: " }}{{ entry.seconds }}</span>
+                            </a>
+                    </h3>
+                </article>
+            {% empty %}
+            <p style="color: rgba(246, 246, 246, 0.885);">Your workout is currently empty! Once you add an exercise, click on any element of it to edit it!</p>
+            {% endfor %}
+        </ul>
+    </div>
 
     {% if form.errors %}
     <div class="error-message">
