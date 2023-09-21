@@ -35,27 +35,31 @@ class ChooseWorkout(View):
     template_name = 'entries/choose_prev.html'
 
     def get(self, request, *args, **kwargs):
+
         entry_data = Entry.objects.all().order_by('order_in_workout')
         existing_entry1 = ExistingEntry1.objects.all().order_by('order_in_workout')
         existing_entry2 = ExistingEntry2.objects.all().order_by('order_in_workout')
         existing_entry3 = ExistingEntry3.objects.all().order_by('order_in_workout')
         existing_entry4 = ExistingEntry4.objects.all().order_by('order_in_workout')
         existing_entry5 = ExistingEntry5.objects.all().order_by('order_in_workout')
+        if len(existing_entry1) == 0:
+            messages.error(self.request, "This button allows you to choose from any of your previous 5 workouts if you want to repeat a workout you've already made, so build your own workout and start it first!")
+            return redirect('entry-list') 
+        else:
+            form = ChoosePrevWorkout()
 
-        form = ChoosePrevWorkout()
-
-        context = {
-            'entry_data': entry_data,
-            'existing_entry1': existing_entry1,
-            'existing_entry2': existing_entry2,
-            'existing_entry3': existing_entry3,
-            'existing_entry4': existing_entry4,
-            'existing_entry5': existing_entry5,
-            'form': form,
-        }
+            context = {
+                'entry_data': entry_data,
+                'existing_entry1': existing_entry1,
+                'existing_entry2': existing_entry2,
+                'existing_entry3': existing_entry3,
+                'existing_entry4': existing_entry4,
+                'existing_entry5': existing_entry5,
+                'form': form,
+            }
 
 
-        return render(request, self.template_name, context)
+            return render(request, self.template_name, context)
     def post(self, request, *args, **kwargs):
         connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None)
         form = ChoosePrevWorkout(request.POST)
@@ -302,10 +306,21 @@ class EntryListView(ListView, View):
         return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        form = CheckWorkout(request.POST)
-        if form.is_valid():
+        #form = CheckWorkout(request.POST)
+        #if form.is_valid():
+        connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None)
+        cursor = connection.execute('PRAGMA foreign_keys = ON;')
+        connection.commit()
+        cursor.close()
+        num = connection.execute('SELECT COUNT(*) FROM entries_entry')
+        nums = num.fetchone()[0]
+        if nums == 0:
+            messages.error(self.request, "You must add an exercise to the workout before starting!")
+            return redirect('entry-list')
+        else:
             return redirect('workout')
-        return render(request, self.template_name, {'form': form})
+        
+        #return render(request, self.template_name, {'form': form})
 
 #lock the button for previous 5 workouts until there's a workout added.
 #make the home button more specific

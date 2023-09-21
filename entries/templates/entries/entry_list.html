@@ -3,7 +3,7 @@
     <article>
         <div class="buttons">
             <a href="{% url 'buildworkout' %}"><button id="add-button">Add your own exercise/break</button></a>
-            <a href="{% url 'choose-prev' %}"><button id="choose-button">Choose from your previous 5 workouts</button></a>
+            <a href="{% url 'choose-prev' %}"><button id="choose-button">Load a past workout</button></a>
         </div>
         <form method="post">
             {% csrf_token %}
@@ -15,39 +15,42 @@
     <div class="workout-list">
         <ul id="exers">
             <h1 style= "font-size: 45px; color: rgba(246, 246, 246, 0.885);">Your Workout</h1>
-            {% for entry in entry_list %}
-                <article>
-                    <h3>
-                        <a href="{% url 'entryorder-detail' entry.id %}">
-                            <span class="small-font" style="font-size: 31px; color: #C85656; font-family: Averia Sans Libre;">{{ "Order in workout: "}}</span> <span class="small-font" style="font-size: 24px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.order_in_workout }}</span>
-                        </a>
-                </h3>
+            {% if entry_list %}
+                <h1 style= "font-size: 15px; color: rgba(246, 246, 246, 0.885); margin-left: 530px; margin-top: -40px">Click on any element of the workout to edit it!</h1>
+                {% for entry in entry_list %}
+                    <article>
                         <h3>
-                            <a href="{% url 'entry-detail' entry.id %}">
-                                <span class="small-font" style="font-size: 31px; color: #C85656; font-family: Averia Sans Libre;">{{ "Exercise: "}}</span> <span class="small-font" style="font-size: 24px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.exercise }}</span>
-                            </a>
-                        </h3>
-                        <h3>
-                            <style>
-                                .time-values {
-                                    margin-right: 10px;
-                                }
-                            </style>
-                            
-                            <a href="{% url 'entrytime-detail' entry.id %}">
-                                <span class="small-font" style="font-size: 31px; color: #C85656; font-family: Averia Sans Libre;">{{ "Minutes: "}}</span> <span class="small-font" style="font-size: 24px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.minutes }}</span>
-                                <span class="small-font" style="font-size: 31px; color: #C85656; font-family: Averia Sans Libre;">{{ "Seconds: "}}</span> <span class="small-font" style="font-size: 24px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.seconds }}</span>
+                            <a href="{% url 'entryorder-detail' entry.id %}">
+                                <span class="small-font" style="font-size: 31px; color: #C85656; font-family: Averia Sans Libre;">{{ "Order in workout: "}}</span> <span class="small-font" style="font-size: 24px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.order_in_workout }}</span>
                             </a>
                     </h3>
-                </article>
-            {% empty %}
-            <p style="color: rgba(246, 246, 246, 0.885);">Your workout is currently empty! Once you add an exercise, click on any element of it to edit it!</p>
-            {% endfor %}
+                            <h3>
+                                <a href="{% url 'entry-detail' entry.id %}">
+                                    <span class="small-font" style="font-size: 31px; color: #C85656; font-family: Averia Sans Libre;">{{ "Exercise: "}}</span> <span class="small-font" style="font-size: 24px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.exercise }}</span>
+                                </a>
+                            </h3>
+                            <h3>
+                                <style>
+                                    .time-values {
+                                        margin-right: 10px;
+                                    }
+                                </style>
+                                
+                                <a href="{% url 'entrytime-detail' entry.id %}">
+                                    <span class="small-font" style="font-size: 31px; color: #C85656; font-family: Averia Sans Libre;">{{ "Minutes: "}}</span> <span class="small-font" style="font-size: 24px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.minutes }}</span>
+                                    <span class="small-font" style="font-size: 31px; color: #C85656; font-family: Averia Sans Libre;">{{ "Seconds: "}}</span> <span class="small-font" style="font-size: 24px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.seconds }}</span>
+                                </a>
+                        </h3>
+                    </article>
+                {% endfor %}
+            {% else %}
+                <p style="color: rgba(246, 246, 246, 0.885);">Your workout is currently empty! Once you add an exercise, click on any element of it to edit it!</p>
+            {% endif %}
         </ul>
     </div>
 
     {% if form.errors %}
-    <div class="error-message">
+    <div class="error-message" >
         <ul>
             {% for field in form %}
                 {% if field.errors %}
@@ -58,41 +61,43 @@
     </div>
     {% endif %}
 <style>
-    /* Style for the messages container */
+
     .success-message {
-        background-color: rgb(173, 216, 230); /* Background color */
-        color: black; /* Text color */
-        padding: 10px; /* Padding around messages */
-        position: fixed; /* Fixed position, stays in place as you scroll */
-        top: 0; /* Position from the top of the viewport */
-        left: 50%; /* Center horizontally */
-        transform: translateX(-50%); /* Center horizontally */
-        width: 80%; /* Width of the container */
-        text-align: center; /* Center-align text */
-        z-index: 1000; /* Set a high z-index to ensure it's on top of other content */
+        background-color: #7ED957;
+        color: #C85656;
+        padding: 10px;
+        position: fixed;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80%;
+        text-align: center;
+        z-index: 1000;
+        font-family: Averia Sans Libre;
     }
 
-    /* Style for individual messages */
+
     .success-message p {
-        margin: 5px 0; /* Spacing between individual messages */
+        margin: 5px 0;
     }
 
     .error-message {
-        background-color: rgb(232, 5, 5); /* Background color */
-        color: black; /* Text color */
-        padding: 10px; /* Padding around messages */
-        position: fixed; /* Fixed position, stays in place as you scroll */
-        top: 0; /* Position from the top of the viewport */
-        left: 50%; /* Center horizontally */
-        transform: translateX(-50%); /* Center horizontally */
-        width: 80%; /* Width of the container */
-        text-align: center; /* Center-align text */
-        z-index: 1000; /* Set a high z-index to ensure it's on top of other content */
+        background-color: #C85656;
+        color: #7ED957;
+        padding: 10px;
+        position: fixed;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80%;
+        text-align: center;
+        z-index: 1000;
+        font-family: Averia Sans Libre;
     }
 
-    /* Style for individual messages */
+
     .error-message p {
-        margin: 5px 0; /* Spacing between individual messages */
+        margin: 5px 0;
     }
 </style>
 {% if messages %}

@@ -10,128 +10,145 @@
                 {% csrf_token %}
                 <legend style="color: #C85656; font-size: 30px; font-family: Averia Sans Libre; margin-left: -50px;">Choose Which Workout To Load</legend>
                 {{ form.workouts }}
-                <button type="submit" style="margin-top: 30px; color: rgba(246, 246, 246, 0.885); background-color: #7ED957;">Load the workout!</button>
+                <button type="submit" style="margin-top: 30px; color: rgba(246, 246, 246, 0.885); background-color: #7ED957; margin-left: 10px;">Load the workout!</button>
             </form>
         </div>
     </article>
-        <h1 style="font-size: 30px; color: rgba(246, 246, 246, 0.885); font-family: Averia Sans Libre;"> Workout 1</h1>
-        {% for entry in existing_entry1 %}
-            <article>
-                <h3>
-                        <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Order in workout: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.order_in_workout }}</span>
-                    </a>
-            </h3>
+            {% if existing_entry1 %}
+            <h1 style="font-size: 30px; color: rgba(246, 246, 246, 0.885); font-family: Averia Sans Libre;"> Workout 1</h1>
+            {% for entry in existing_entry1 %}
+                <article>
                     <h3>
-                        <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Exercise: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.exercise }}</span>
-                        </a>
-                    </h3>
-                    <h3>
-                        
-                        <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Minutes: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.minutes }}</span>
-
-                        <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Seconds: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.seconds }}</span>
+                            <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Order in workout: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.order_in_workout }}</span>
                         </a>
                 </h3>
-            </article>
-        {% empty %}
-            <p>Empty</p>
-        {% endfor %}
-        <br>
-        <br>
-        <h1 style="font-size: 30px; color: rgba(246, 246, 246, 0.885); font-family: Averia Sans Libre;"> Workout 2</h1>
-        {% for entry in existing_entry2 %}
-            <article>
-                <h3>
-                        <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Order in workout: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.order_in_workout }}</span>
-                    </a>
-            </h3>
-                    <h3>
-                        <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Exercise: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.exercise }}</span>
-                        </a>
+                        <h3>
+                            <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Exercise: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.exercise }}</span>
+                            </a>
+                        </h3>
+                        <h3>
+                            
+                            <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Minutes: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.minutes }}</span>
+                            
+                            <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Seconds: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.seconds }}</span>
+                            </a>
                     </h3>
+                </article>
+            {% endfor %}
+        {% else %}
+            <noscript>
+            </noscript>
+        {% endif %}
+        <br>
+        <br>
+        {% if existing_entry2 %}
+            <h1 style="font-size: 30px; color: rgba(246, 246, 246, 0.885); font-family: Averia Sans Libre;"> Workout 2</h1>
+            {% for entry in existing_entry2 %}
+                <article>
                     <h3>
-                        
-                        <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Minutes: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.minutes }}</span>
-                        
-                        <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Seconds: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.seconds }}</span>
+                            <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Order in workout: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.order_in_workout }}</span>
                         </a>
                 </h3>
-            </article>
-        {% empty %}
-            <p>Empty</p>
-        {% endfor %}
-        <br>
-        <br>
-        <h1 style="font-size: 30px; color: rgba(246, 246, 246, 0.885); font-family: Averia Sans Libre;"> Workout 3</h1>
-        {% for entry in existing_entry3 %}
-            <article>
-                <h3>
-                        <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Order in workout: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.order_in_workout }}</span>
-                    </a>
-            </h3>
-                    <h3>
-                        <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Exercise: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.exercise }}</span>
-                        </a>
+                        <h3>
+                            <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Exercise: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.exercise }}</span>
+                            </a>
+                        </h3>
+                        <h3>
+                            
+                            <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Minutes: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.minutes }}</span>
+                            
+                            <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Seconds: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.seconds }}</span>
+                            </a>
                     </h3>
+                </article>
+            {% endfor %}
+        {% else %}
+            <noscript>
+            </noscript>
+        {% endif %}
+        <br>
+        <br>
+        {% if existing_entry3 %}
+            <h1 style="font-size: 30px; color: rgba(246, 246, 246, 0.885); font-family: Averia Sans Libre;"> Workout 3</h1>
+            {% for entry in existing_entry3 %}
+                <article>
                     <h3>
-                        
-                        <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Minutes: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.minutes }}</span>
-                        
-                        <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Seconds: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.seconds }}</span>
+                            <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Order in workout: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.order_in_workout }}</span>
                         </a>
                 </h3>
-            </article>
-        {% empty %}
-            <p>Empty</p>
-        {% endfor %}
-        <br>
-        <br>
-        <h1 style="font-size: 30px; color: rgba(246, 246, 246, 0.885); font-family: Averia Sans Libre;"> Workout 4</h1>
-        {% for entry in existing_entry4 %}
-            <article>
-                <h3>
-                        <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Order in workout: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.order_in_workout }}</span>
-                    </a>
-            </h3>
-                    <h3>
-                        <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Exercise: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.exercise }}</span>
-                        </a>
+                        <h3>
+                            <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Exercise: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.exercise }}</span>
+                            </a>
+                        </h3>
+                        <h3>
+                            
+                            <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Minutes: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.minutes }}</span>
+                            
+                            <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Seconds: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.seconds }}</span>
+                            </a>
                     </h3>
+                </article>
+            {% endfor %}
+        {% else %}
+            <noscript>
+            </noscript>
+        {% endif %}
+        <br>
+        <br>
+        {% if existing_entry4 %}
+            <h1 style="font-size: 30px; color: rgba(246, 246, 246, 0.885); font-family: Averia Sans Libre;"> Workout 4</h1>
+            {% for entry in existing_entry4 %}
+                <article>
                     <h3>
-                        
-                        <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Minutes: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.minutes }}</span>
-                        
-                        <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Seconds: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.seconds }}</span>
+                            <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Order in workout: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.order_in_workout }}</span>
                         </a>
                 </h3>
-            </article>
-        {% empty %}
-            <p>Empty</p>
-        {% endfor %}
-        <br>
-        <br>
-        <h1 style="font-size: 30px; color: rgba(246, 246, 246, 0.885); font-family: Averia Sans Libre;"> Workout 5</h1>
-        {% for entry in existing_entry5 %}
-            <article>
-                <h3>
-                        <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Order in workout: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.order_in_workout }}</span>
-                    </a>
-            </h3>
-                    <h3>
-                        <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Exercise: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.exercise }}</span>
-                        </a>
+                        <h3>
+                            <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Exercise: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.exercise }}</span>
+                            </a>
+                        </h3>
+                        <h3>
+                            
+                            <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Minutes: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.minutes }}</span>
+                            
+                            <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Seconds: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.seconds }}</span>
+                            </a>
                     </h3>
+                </article>
+            {% endfor %}
+        {% else %}
+            <noscript>
+            </noscript>
+        {% endif %}
+        <br>
+        <br>
+        {% if existing_entry5 %}
+            <h1 style="font-size: 30px; color: rgba(246, 246, 246, 0.885); font-family: Averia Sans Libre;"> Workout 5</h1>
+            {% for entry in existing_entry5 %}
+                <article>
                     <h3>
-                        
-                        <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Minutes: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.minutes }}</span>
-                        
-                        <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Seconds: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.seconds }}</span>
+                            <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Order in workout: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.order_in_workout }}</span>
                         </a>
                 </h3>
-            </article>
-        {% empty %}
-            <p>Empty</p>
-        {% endfor %}
+                        <h3>
+                            <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Exercise: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.exercise }}</span>
+                            </a>
+                        </h3>
+                        <h3>
+                            
+                            <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Minutes: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.minutes }}</span>
+                            
+                            <span class="small-font" style="font-size: 20px; color: #C85656; font-family: Averia Sans Libre;">{{ "Seconds: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.seconds }}</span>
+                            </a>
+                    </h3>
+                </article>
+            {% endfor %}
+        {% else %}
+            <noscript>
+            </noscript>
+        {% endif %}
+        <br>
+        <br>
 
     
 

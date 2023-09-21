@@ -2,6 +2,7 @@ from typing import Any, Dict
 from django import forms
 from django.core.exceptions import ValidationError
 import sqlite3
+from .models import Entry, ExistingEntry1, ExistingEntry2, ExistingEntry3, ExistingEntry4, ExistingEntry5
 
 class DropdownMenuForm(forms.Form):
     seconds = forms.ChoiceField(choices=[(0, '0'),(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5'), 
@@ -91,8 +92,35 @@ class CheckWorkout(forms.Form):
             raise ValidationError("You must add an exercise to the workout before starting!")
         
 
+
 class ChoosePrevWorkout(forms.Form):
-    workouts = forms.ChoiceField(choices=[("1", 'Workout 1'), ("2", 'Workout 2'), ("3", 'Workout 3'), ("4", 'Workout 4'), ("5", 'Workout 5')])
+    workouts = forms.ChoiceField(
+        choices=[],
+        widget=forms.Select(attrs={'style': 'width: 210px; height: 40px; font-size: 26px; margin-left: -43px'})
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        entry_data = Entry.objects.all().order_by('order_in_workout')
+        existing_entry1 = ExistingEntry1.objects.all().order_by('order_in_workout')
+        existing_entry2 = ExistingEntry2.objects.all().order_by('order_in_workout')
+        existing_entry3 = ExistingEntry3.objects.all().order_by('order_in_workout')
+        existing_entry4 = ExistingEntry4.objects.all().order_by('order_in_workout')
+        existing_entry5 = ExistingEntry5.objects.all().order_by('order_in_workout')
+        print(existing_entry1)
+        options = []
+        if len(existing_entry1) != 0:
+            options.append(("1", "Workout 1"))
+        if len(existing_entry2) != 0:
+            options.append(("2", "Workout 2"))
+        if len(existing_entry3) != 0:
+            options.append(("3", "Workout 3"))
+        if len(existing_entry4) != 0:
+            options.append(("4", "Workout 4"))
+        if len(existing_entry5) != 0:
+            options.append(("5", "Workout 5"))
+        self.fields['workouts'].choices = options
+        
     def clean(self):
         cleaned_data = super().clean()
         workouts = int(cleaned_data.get('workouts', 0))
