@@ -1,8 +1,9 @@
 {% extends "entries/base.html" %}
 {% load static %}
 {% block content %}
+
     <article>
-        <h3 style="color: rgba(246, 246, 246, 0.885); font-family: Averia Sans Libre; margin-top: -158px; margin-left: 250px;">{{ "Here are your previous five workouts. Selecting one will clear and replace the exercises in your current workout. Once loaded in, the exercises can be edited!" }}</h3>
+        <h3 style="color: rgba(246, 246, 246, 0.885); font-family: Averia Sans Libre; margin-top: -158px; margin-left: 250px;">{{ "Select any of your previous workouts(a max of 5 will be saved) to get started quickly!" }}</h3>
     </article>
     <article>
         <div class="choose" style="margin-left: 480px; margin-top: -70px;">
@@ -10,9 +11,10 @@
                 {% csrf_token %}
                 <legend style="color: #C85656; font-size: 30px; font-family: Averia Sans Libre; margin-left: -50px;">Choose Which Workout To Load</legend>
                 {{ form.workouts }}
-                <button type="submit" style="margin-top: 30px; color: rgba(246, 246, 246, 0.885); background-color: #7ED957; margin-left: 10px;">Load the workout!</button>
+                <button type="submit" id="clear-button" style="margin-top: 30px; color: rgba(246, 246, 246, 0.885); background-color: #7ED957; margin-left: 10px;">Load the workout!</button>
             </form>
         </div>
+        <a href="{% url 'clear-all' %}"><button id="clear-button" style="margin-top: 30px; color: rgba(246, 246, 246, 0.885); background-color: #7ED957; margin-left: 640px;">Clear past workouts</button></a>
     </article>
             {% if existing_entry1 %}
             <h1 style="font-size: 30px; color: rgba(246, 246, 246, 0.885); font-family: Averia Sans Libre;"> Workout 1</h1>

@@ -76,4 +76,8 @@ urlpatterns = [
         'choose-prev',
         views.ChooseWorkout.as_view(),
         name='choose-prev'),
+    path(
+        'clear-all',
+        views.clear_all,
+        name='clear-all'),
 ]

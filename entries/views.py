@@ -31,6 +31,18 @@ def get_exercise_data(request):
     exercise_data = sorted(exercise_data, key=lambda x: x['order_in_workout'])
     return JsonResponse({'exerciseData': exercise_data})
 
+
+
+def clear_all():
+    connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None)
+    connection.execute('DELETE FROM entries_entry;')
+    connection.execute('DELETE FROM entries_existingentry1;')
+    connection.execute('DELETE FROM entries_existingentry2;')
+    connection.execute('DELETE FROM entries_existingentry3;')
+    connection.execute('DELETE FROM entries_existingentry4;')
+    connection.execute('DELETE FROM entries_existingentry5;')
+    return redirect('entry-list')
+
 class ChooseWorkout(View):
     template_name = 'entries/choose_prev.html'
 
