@@ -37,7 +37,6 @@ class DropdownMenuForm(forms.Form):
         if seconds == 0 and minutes == 0:
             raise ValidationError("Please choose a time greater than zero.")
 
-
 class DropdownUpdateSecondsMenuForm(forms.Form):
     seconds = forms.ChoiceField(choices=[(0, '0'),(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5'), 
                                          (6, '6'), (7, '7'), (8, '8'), (9, '9'), (10, '10'), 

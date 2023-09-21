@@ -1,3 +1,4 @@
+from typing import Any
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
@@ -11,7 +12,7 @@ from django.views.generic import (
     DeleteView,
     View
 )
-from django.http import JsonResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.contrib import messages
 from django import forms
 from .forms import DropdownMenuForm, DropdownUpdateMinutesMenuForm, DropdownUpdateSecondsMenuForm, CheckWorkout, ChoosePrevWorkout
@@ -24,7 +25,7 @@ from .models import Entry
 def get_exercise_data(request):
     exercises = GoWorkout.objects.all()
     exercise_data = [
-        {'exercise': exercise.exercise, 'time': int(exercise.seconds) + int(exercise.minutes * 60), 'order_in_workout': exercise.order_in_workout}
+        {'exercise': exercise.exercise, 'time': float(exercise.seconds) + float(int(exercise.minutes) * 60), 'order_in_workout': exercise.order_in_workout}
         for exercise in exercises
     ]
     exercise_data = sorted(exercise_data, key=lambda x: x['order_in_workout'])
@@ -85,6 +86,10 @@ class EntryForm(forms.ModelForm):
 class LockedView(LoginRequiredMixin):
     login_url = "admin:login"
 
+
+#lock the button for previous 5 workouts until there's a workout added.
+#make the home button more specific
+#
 
 class DropdownMenu(View, SuccessMessageMixin):
 
@@ -163,7 +168,7 @@ class DropdownUpdateMenu(View, SuccessMessageMixin):
                 cursor = connection.execute('PRAGMA foreign_keys = ON;')
                 connection.commit()
                 cursor.close()
-                connection.execute('UPDATE entries_entry SET seconds = :seconds WHERE id = :id;', {'seconds': selected_option_seconds, 'id': self.get_id(0)})
+                connection.execute('UPDATE entries_entry SET seconds = :seconds WHERE id = :id;', {'seconds': int(selected_option_seconds), 'id': self.get_id(0)})
                 item = connection.execute('SELECT exercise FROM entries_entry WHERE id = :id', {'id':self.get_id(0)})
                 workout = item.fetchone()
                 time = selected_option_seconds
@@ -206,7 +211,7 @@ class DropdownUpdateMinutesMenu(View):
                 cursor = connection.execute('PRAGMA foreign_keys = ON;')
                 connection.commit()
                 cursor.close()
-                connection.execute('UPDATE entries_entry SET minutes = :minutes WHERE id = :id;', {'minutes': selected_option_minutes, 'id': self.get_id(0)})
+                connection.execute('UPDATE entries_entry SET minutes = :minutes WHERE id = :id;', {'minutes': int(selected_option_minutes), 'id': self.get_id(0)})
                 item = connection.execute('SELECT exercise FROM entries_entry WHERE id = :id', {'id':self.get_id(0)})
                 workout = item.fetchone()
                 time = selected_option_minutes
@@ -288,11 +293,23 @@ class EntryListView(ListView, View):
     queryset = Entry.objects.all().order_by('order_in_workout')
     template_name = 'entries/entry_list.html'
 
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None)
+        isit = connection.execute('SELECT id FROM entries_entry WHERE minutes = :minutes AND seconds = :seconds;', {'minutes':0, 'seconds':0})
+        id = isit.fetchone()
+        if id is not None:
+            connection.execute('DELETE FROM entries_entry WHERE id = :id;', {'id': id[0]})
+        return super().get(request, *args, **kwargs)
+
     def post(self, request, *args, **kwargs):
         form = CheckWorkout(request.POST)
         if form.is_valid():
             return redirect('workout')
         return render(request, self.template_name, {'form': form})
+
+#lock the button for previous 5 workouts until there's a workout added.
+#make the home button more specific
+#
 
 class WorkoutGo(View, SuccessMessageMixin):
     model = Entry
