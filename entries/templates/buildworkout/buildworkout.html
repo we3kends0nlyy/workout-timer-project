@@ -5,11 +5,11 @@
         <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
-            <input type="submit" value="Confirm">
+            <input type="submit" id="confirm-button" value="Confirm">
         </form>
             {% if entry %}
                 <a href="{% url 'entry-detail' entry.id %}">
-                    <button>Cancel</button>
+                    <button id="cancel-button">Cancel</button>
                 </a>
             {% else %}
                 <a href="{% url 'entry-list' %}">
@@ -17,4 +17,16 @@
                 </a>
         {% endif %}
     </div>
+<style>
+    #confirm-button {
+    color: rgba(246, 246, 246, 0.885); 
+    background-color: #7ED957; 
+    margin-bottom: 10px;
+    }
+
+    #confirm-button:hover {
+    background-color: #5c804f; /* Change the background color on hover */
+    color: white;
+    }
+</style>
 {% endblock %}

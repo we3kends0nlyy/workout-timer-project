@@ -16,7 +16,7 @@ class DropdownMenuForm(forms.Form):
                                            (41, '41'), (42, '42'), (43, '43'), (44, '44'), (45, '45'), 
                                            (46, '46'), (47, '47'), (48, '48'), (49, '49'), (50, '50'), 
                                            (51, '51'), (52, '52'), (53, '53'), (54, '54'), (55, '55'), 
-                                           (56, '56'), (57, '57'), (58, '58'), (59, '59'), (60, '60')])
+                                           (56, '56'), (57, '57'), (58, '58'), (59, '59'), (60, '60')], widget=forms.Select(attrs={'style': 'width: 210px; height: 40px; font-size: 26px; margin-left: -43px; background-color: rgba(246, 246, 246, 0.885); color: #C85656'}))
     minutes = forms.ChoiceField(choices=[(0, '0'), (1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5'), 
                                          (6, '6'), (7, '7'), (8, '8'), (9, '9'), (10, '10'), 
                                          (11, '11'), (12, '12'), (13, '13'), (14, '14'), (15, '15'),
@@ -28,7 +28,7 @@ class DropdownMenuForm(forms.Form):
                                            (41, '41'), (42, '42'), (43, '43'), (44, '44'), (45, '45'), 
                                            (46, '46'), (47, '47'), (48, '48'), (49, '49'), (50, '50'), 
                                            (51, '51'), (52, '52'), (53, '53'), (54, '54'), (55, '55'), 
-                                           (56, '56'), (57, '57'), (58, '58'), (59, '59'), (60, '60')])
+                                           (56, '56'), (57, '57'), (58, '58'), (59, '59'), (60, '60')], widget=forms.Select(attrs={'style': 'width: 210px; height: 40px; font-size: 26px; margin-left: -43px; background-color: rgba(246, 246, 246, 0.885); color: #C85656'}))
     
     def clean(self):
         cleaned_data = super().clean()
@@ -50,7 +50,7 @@ class DropdownUpdateSecondsMenuForm(forms.Form):
                                            (41, '41'), (42, '42'), (43, '43'), (44, '44'), (45, '45'), 
                                            (46, '46'), (47, '47'), (48, '48'), (49, '49'), (50, '50'), 
                                            (51, '51'), (52, '52'), (53, '53'), (54, '54'), (55, '55'), 
-                                           (56, '56'), (57, '57'), (58, '58'), (59, '59'), (60, '60')])
+                                           (56, '56'), (57, '57'), (58, '58'), (59, '59'), (60, '60')], widget=forms.Select(attrs={'style': 'width: 210px; height: 40px; font-size: 26px; margin-left: -43px; background-color: rgba(246, 246, 246, 0.885); color: #C85656'}))
     def clean(self):
         cleaned_data = super().clean()
         seconds = int(cleaned_data.get('seconds', 0))
@@ -68,7 +68,7 @@ class DropdownUpdateMinutesMenuForm(forms.Form):
                                            (41, '41'), (42, '42'), (43, '43'), (44, '44'), (45, '45'), 
                                            (46, '46'), (47, '47'), (48, '48'), (49, '49'), (50, '50'), 
                                            (51, '51'), (52, '52'), (53, '53'), (54, '54'), (55, '55'), 
-                                           (56, '56'), (57, '57'), (58, '58'), (59, '59'), (60, '60')])
+                                           (56, '56'), (57, '57'), (58, '58'), (59, '59'), (60, '60')], widget=forms.Select(attrs={'style': 'width: 210px; height: 40px; font-size: 26px; margin-left: -43px; background-color: rgba(246, 246, 246, 0.885); color: #C85656'}))
 
     def clean(self):
         cleaned_data = super().clean()
@@ -96,7 +96,7 @@ class CheckWorkout(forms.Form):
 class ChoosePrevWorkout(forms.Form):
     workouts = forms.ChoiceField(
         choices=[],
-        widget=forms.Select(attrs={'style': 'width: 210px; height: 40px; font-size: 26px; margin-left: -43px'})
+        widget=forms.Select(attrs={'style': 'width: 210px; height: 40px; font-size: 26px; margin-left: -43px;  background-color: rgba(246, 246, 246, 0.885); color: #C85656'})
     )
 
     def __init__(self, *args, **kwargs):

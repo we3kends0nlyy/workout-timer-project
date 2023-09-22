@@ -2,12 +2,42 @@
 
 {% block content %}
     <article>
-        <h3>{{ "MINUTES: " }}{{ entry.minutes }}</h3>
-        <h3>{{ "SECONDS: " }}{{ entry.seconds }}</h3>
+        <h3 style="font-size: 40px; font-family: Averia Sans Libre; margin-left: 500px; color: rgba(246, 246, 246, 0.885);">{{ "Minutes: " }}<span style="color: #7ED957">{{ entry.minutes }}</span><span style="font-size: 40px; font-family: Averia Sans Libre; margin-left: 50px; color: rgba(246, 246, 246, 0.885);">{{ "Seconds: " }}</span><span style="color: #7ED957">{{ entry.seconds }}</span></h3>
     </article>
-
-	<p>
-	    <a href="{% url 'dropdown-update-minutes' entry.minutes entry.id %}">✍️ Edit minutes</a>
-        <a href="{% url 'dropdown-update' entry.seconds entry.id %}">✍️ Edit seconds</a>
+    <p>
+		<a href="{% url 'dropdown-update-minutes' entry.minutes entry.id %}">
+			<button id="mins-button">Edit Minutes</button>
+		<a href="{% url 'dropdown-update' entry.seconds entry.id %}">
+			<button id="secs-button">Edit Seconds</button>
 	</p>
+
+<style>
+	#mins-button{
+		font-size: 30px; 
+		color: #C85656; 
+		margin-left: 650px; 
+		margin-top: 30px;
+		background-color: rgba(246, 246, 246, 0.885); 
+		font-family: Averia Sans Libre;
+	}
+
+	#mins-button:hover {
+		background-color: rgba(192, 190, 190, 0.885);
+		color: #C85656;
+	}
+
+	#secs-button{
+		font-size: 30px; 
+		color: #C85656; 
+		margin-left: 650px; 
+		margin-top: 30px;
+		background-color: rgba(246, 246, 246, 0.885); 
+		font-family: Averia Sans Libre;
+	}
+
+	#secs-button:hover {
+		background-color: rgba(192, 190, 190, 0.885);
+		color: #C85656;
+	}
+</style>
 {% endblock %}

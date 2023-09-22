@@ -2,11 +2,26 @@
 
 {% block content %}
     <article>
-        <h3>{{ "ORDER OF EXERCISE IN THE WORKOUT: " }}{{ entry.order_in_workout }}</h3>
+        <h3 style="font-size: 40px; font-family: Averia Sans Libre; margin-left: 330px; color: rgba(246, 246, 246, 0.885);">{{ "ORDER OF EXERCISE IN THE WORKOUT: " }}<span style="color: #7ED957">{{ entry.order_in_workout }}</span></h3>
     </article>
     
 	<p>
-	    <a href="{% url 'entry-update2' entry.id %}">✍️ Edit</a>
-	    <a href="{% url 'entry-delete' entry.id %}">⛔ Delete</a>
+		<a href="{% url 'entry-update2' entry.id %}">
+			<button id="edit-button">Edit</button>
 	</p>
+<style>
+	#edit-button{
+		font-size: 30px; 
+		color: #C85656; 
+		margin-left: 650px; 
+		margin-top: 30px;
+		background-color: rgba(246, 246, 246, 0.885); 
+		font-family: Averia Sans Libre;
+	}
+
+	#edit-button:hover {
+		background-color: rgba(192, 190, 190, 0.885);
+		color: #C85656;
+	}
+</style>
 {% endblock %}

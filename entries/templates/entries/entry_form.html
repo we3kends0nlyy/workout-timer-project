@@ -1,18 +1,38 @@
 {% extends "entries/base.html" %}
 {% block content %}
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Save">
-    </form>
-    {% if entry %}
-        <a href="{% url 'entry-detail' entry.id %}">
-            <button>Cancel</button>
-        </a>
-    {% else %}
-        <a href="{% url 'entry-list' %}">
-            <button>Cancel</button>
-        </a>
-    {% endif %}
+    <div id="formss">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" id="save-button" value="Save">
+        </form>
+        {% if entry %}
+            <a href="{% url 'entry-detail' entry.id %}">
+                <button style="margin-left: 210px;">Cancel</button>
+            </a>
+        {% else %}
+            <a href="{% url 'entry-list' %}">
+                <button>Cancel</button>
+            </a>
+        {% endif %}
+    </div>
+        
+<style>
+    #formss {
+        margin-left: 470px;
+    }
+    #save-button {
+        color: rgba(246, 246, 246, 0.885); 
+        background-color: #7ED957; 
+        margin-bottom: 15px;
+        margin-left: 210px;
+        margin-top: 15px;
+        }
+    
+        #save-button:hover {
+        background-color: #5c804f; /* Change the background color on hover */
+        color: white;
+        }
+</style>
     
 {% endblock %}

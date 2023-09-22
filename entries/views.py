@@ -33,7 +33,7 @@ def get_exercise_data(request):
 
 
 
-def clear_all():
+def clear_all(request):
     connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None)
     connection.execute('DELETE FROM entries_entry;')
     connection.execute('DELETE FROM entries_existingentry1;')
@@ -55,7 +55,7 @@ class ChooseWorkout(View):
         existing_entry4 = ExistingEntry4.objects.all().order_by('order_in_workout')
         existing_entry5 = ExistingEntry5.objects.all().order_by('order_in_workout')
         if len(existing_entry1) == 0:
-            messages.error(self.request, "This button allows you to choose from any of your previous 5 workouts if you want to repeat a workout you've already made, so build your own workout and start it first!")
+            messages.error(self.request, "You must add to your own workout and start it before you can access this page.")
             return redirect('entry-list') 
         else:
             form = ChoosePrevWorkout()
@@ -388,7 +388,7 @@ class EntryUpdateView(LockedView, SuccessMessageMixin, UpdateView):
     template_name = 'entries/entry_form.html'
 
     def get_success_url(self):
-        return reverse_lazy("entry-detail", kwargs={"pk": self.object.pk})
+        return reverse_lazy("entry-list")
 
 class EntryUpdateView2(LockedView, SuccessMessageMixin, UpdateView):
     model = Entry
@@ -404,7 +404,7 @@ class EntryUpdateView2(LockedView, SuccessMessageMixin, UpdateView):
         self.ids = []
 
     def get_success_url(self):
-        return reverse_lazy("entryorder-detail", kwargs={"pk": self.object.pk})
+        return reverse_lazy("entry-list")
 
     def get_object(self, queryset=None):
         self.original_entry = super().get_object(queryset)

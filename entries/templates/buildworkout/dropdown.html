@@ -1,13 +1,24 @@
 {% extends 'entries/base.html' %}
 {% block content %}
-    <form method="post">
-        {% csrf_token %}
-        <article>
-            <h3>{{ "Choose the amount of time for this exercise/break! " }}</h3>
-        </article>
-        {{ form.as_p }}
-        <button type="submit">Submit</button>
-    </form>
+
+    <article>
+        
+        <div class="choose" style="margin-left: 480px; margin-top: -70px;">
+            <form method="post" style="margin-top: -40px; margin-left: 100px;">
+                {% csrf_token %}
+                <legend style="color: #C85656; font-size: 41px; font-family: Averia Sans Libre; margin-left: -210px;">Choose The Amount Of Time For This Exercise</legend>
+                <h1 style="margin-left: -40px; margin-top: 40px; font-size: 34px; font-family: Averia Sans Libre; color: rgba(246, 246, 246, 0.885);">Seconds:</h1>
+                <div id="form.seconds" style="margin-top: -65px; margin-left: 230px">
+                    {{ form.seconds }}
+                </div>
+                <h1 style="margin-left: -40px; margin-top: 120px; font-size: 34px; font-family: Averia Sans Libre; color: rgba(246, 246, 246, 0.885);">Minutes:</h1>
+                <div id="form.minutes" style="margin-top: -65px; margin-left: 230px">
+                    {{ form.minutes }}
+                </div>
+                <button type="submit" id="save-button">Save!</button>
+            </form>
+        </div>
+    </article>
     {% if selected_option %}
         <p>You selected: {{ selected_option }}</p>
     {% endif %}
@@ -31,5 +42,19 @@
         {% endfor %}
     </ul>
     {% endif %}
+
+<style>
+    #save-button {
+    margin-top: 100px;
+    color: rgba(246, 246, 246, 0.885); 
+    background-color: #7ED957; 
+    margin-left: 95px;
+    }
+
+    #save-button:hover {
+    background-color: #5EA843; /* Change the background color on hover */
+    color: white;
+    }
+</style>
 
 {% endblock %}

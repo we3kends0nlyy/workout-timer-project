@@ -14,19 +14,19 @@
 
     <div class="workout-list">
         <ul id="exers">
-            <h1 style= "font-size: 45px; color: rgba(246, 246, 246, 0.885);">Your Workout</h1>
+            <h1 style= "font-size: 50px; color: rgba(246, 246, 246, 0.885); font-weight: bolder;">Your Workout</h1>
             {% if entry_list %}
                 <h1 style= "font-size: 15px; color: rgba(246, 246, 246, 0.885); margin-left: 530px; margin-top: -40px">Click on any element of the workout to edit it!</h1>
                 {% for entry in entry_list %}
                     <article>
                         <h3>
                             <a href="{% url 'entryorder-detail' entry.id %}">
-                                <span class="small-font" style="font-size: 31px; color: #C85656; font-family: Averia Sans Libre;">{{ "Order in workout: "}}</span> <span class="small-font" style="font-size: 24px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.order_in_workout }}</span>
+                                <span class="small-font" style="font-size: 31px; color: rgba(246, 246, 246, 0.885) font-family: Averia Sans Libre;">{{ "Order in workout: "}}</span> <span class="small-font" style="font-size: 24px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.order_in_workout }}</span>
                             </a>
                     </h3>
                             <h3>
                                 <a href="{% url 'entry-detail' entry.id %}">
-                                    <span class="small-font" style="font-size: 31px; color: #C85656; font-family: Averia Sans Libre;">{{ "Exercise: "}}</span> <span class="small-font" style="font-size: 24px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.exercise }}</span>
+                                    <span class="small-font" style="font-size: 31px; color: rgba(246, 246, 246, 0.885); font-family: Averia Sans Libre;">{{ "Exercise: "}}</span> <span class="small-font" style="font-size: 24px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.exercise }}</span>
                                 </a>
                             </h3>
                             <h3>
@@ -37,14 +37,14 @@
                                 </style>
                                 
                                 <a href="{% url 'entrytime-detail' entry.id %}">
-                                    <span class="small-font" style="font-size: 31px; color: #C85656; font-family: Averia Sans Libre;">{{ "Minutes: "}}</span> <span class="small-font" style="font-size: 24px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.minutes }}</span>
-                                    <span class="small-font" style="font-size: 31px; color: #C85656; font-family: Averia Sans Libre;">{{ "Seconds: "}}</span> <span class="small-font" style="font-size: 24px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.seconds }}</span>
+                                    <span class="small-font" style="font-size: 31px; color: rgba(246, 246, 246, 0.885); font-family: Averia Sans Libre;">{{ "Minutes: "}}</span> <span class="small-font" style="font-size: 24px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.minutes }}</span>
+                                    <span class="small-font" style="font-size: 31px; color:rgba(246, 246, 246, 0.885); font-family: Averia Sans Libre;">{{ "Seconds: "}}</span> <span class="small-font" style="font-size: 24px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.seconds }}</span>
                                 </a>
                         </h3>
                     </article>
                 {% endfor %}
             {% else %}
-                <p style="color: rgba(246, 246, 246, 0.885);">Your workout is currently empty! Once you add an exercise, click on any element of it to edit it!</p>
+                <p style="color: rgba(246, 246, 246, 0.885);">Your workout is currently empty! Add your own exercises to the workout#### click on any element of the workout to edit it!</p>
             {% endif %}
         </ul>
     </div>
@@ -98,6 +98,42 @@
 
     .error-message p {
         margin: 5px 0;
+    }
+
+    #start-button {
+    margin-top: 100px;
+    color: rgba(246, 246, 246, 0.885); 
+    background-color: #7ED957; 
+    margin-left: 123px;
+    }
+
+    #start-button:hover {
+    background-color: rgba(246, 246, 246, 0.885); /* Change the background color on hover */
+    color: #7ED957;
+    }
+    #add-button{
+    font-size: 20px; 
+    color: #C85656; 
+    margin-right: 50px;
+    background-color: rgba(246, 246, 246, 0.885); 
+    font-family: Averia Sans Libre;
+}
+
+    #add-button:hover {
+    background-color: rgba(192, 190, 190, 0.885);
+    color: #C85656;
+}
+
+    #choose-button{
+        font-size: 20px; 
+        color: #C85656; 
+        background-color: rgba(246, 246, 246, 0.885); 
+        font-family: Averia Sans Libre;
+    }
+
+    #choose-button:hover {
+        background-color: rgba(192, 190, 190, 0.885);
+        color: #C85656;
     }
 </style>
 {% if messages %}
