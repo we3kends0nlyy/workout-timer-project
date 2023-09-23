@@ -7,32 +7,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Countdown Timer</title>
     <style>
-        /* Center the countdown and exercise text vertically and horizontally */
+
         .container {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh; /* Adjust this value to center vertically */
-            flex-direction: column; /* Display elements vertically */
+            height: 100vh;
+            flex-direction: column;
         }
 
-        /* Style the countdown and exercise text */
+
         .text {
-            font-size: 100px; /* Adjust the font size as needed */
+            font-size: 100px;
             font-weight: bold;
             text-align: center;
-            margin-bottom: 50px;
+            margin-top: -600px;
+            color: rgba(246, 246, 246, 0.885);
+            font-family: Averia Sans Libre;
         }
 
-        /* Style the exercise text */
+
         .exercise-text {
-            font-size: 50px; /* Adjust the font size as needed */
-            margin-bottom: 20px;
+            font-size: 70px;
+            margin-bottom: 40px;
+            color: rgba(246, 246, 246, 0.885);
+            font-family: Averia Sans Libre;
+        }
+        .exercise-text2 {
+            font-size: 70px;
+            margin-top: -120px;
+            margin-left: 330px;
+            color: rgba(246, 246, 246, 0.885);
+            font-family: Averia Sans Libre;
         }
 
-        /* Style the timer text */
+
         .timer-text {
-            font-size: 30px; /* Adjust the font size as needed */
+            font-size: 30px;
+            color: rgba(246, 246, 246, 0.885);
+            font-family: Averia Sans Libre;
         }
     </style>
 </head>
@@ -41,6 +54,7 @@
         <div class="text" id="countdown">5</div>
         <div class="container" id="exercise-container" style="display: none;">
             <div class="exercise-text" id="exercise-name">Exercise Name</div>
+            <div class="exercise-text2" id="exercise-name2">Exercise Name</div>
             <div class="exercise-text" id="next-exercise-name">Next Exercise: Exercise Name</div>
             <div class="timer-text" id="total-time">Total Time Remaining: 00:00</div>
             <div class="timer-text" id="exercise-timer">Exercise Time Remaining: 00:00</div>
@@ -48,30 +62,30 @@
     </div>
 
     <script>
-        // JavaScript code for countdown
-        const countdownElement = document.getElementById('countdown');
-        let countdown = 1; // Initial countdown value
 
-        // Function to update the countdown element
+        const countdownElement = document.getElementById('countdown');
+        let countdown = 1;
+
+
         function updateCountdown() {
             countdownElement.textContent = countdown;
             countdown--;
 
-            // Stop the countdown when it reaches 0
+
             if (countdown < 0) {
                 clearInterval(countdownInterval);
                 countdownElement.textContent = "Let's go!";
                 setTimeout(function () {
-                    countdownElement.style.display = 'none'; // Hide the countdown text
-                    startExerciseDisplay(); // Start displaying exercises
-                }, 2000); // Wait for 2 seconds before removing "Let's go!" text
+                    countdownElement.style.display = 'none';
+                    startExerciseDisplay();
+                }, 2000);
             }
         }
 
-        // Call the updateCountdown function every second
+
         const countdownInterval = setInterval(updateCountdown, 1000);
 
-        // Function to format time as mm:ss
+
         function formatTime(seconds) {
             const minutes = Math.floor(seconds / 60);
             const remainingSeconds = seconds % 60;
@@ -80,13 +94,13 @@
             return `${formattedMinutes}:${formattedSeconds}`;
         }
 
-        // JavaScript code for displaying exercises
+
         function startExerciseDisplay() {
             const exerciseContainer = document.getElementById('exercise-container');
             exerciseContainer.style.display = 'block';
 
-            // Fetch exercise data from Django view
-            fetch('/get-exercise-data/') // Update the URL to match your Django URL
+
+            fetch('/get-exercise-data/')
                 .then(response => response.json())
                 .then(data => {
                     const exerciseData = data.exerciseData;
@@ -103,20 +117,24 @@
                             const totalTimeElement = document.getElementById('total-time');
                             const exerciseTimerElement = document.getElementById('exercise-timer');
                             const nextExerciseNameElement = document.getElementById('next-exercise-name');
-
                             const exercise = exerciseData[currentIndex];
-                            exerciseNameElement.textContent = `Exercise: ${(exercise.exercise)}`;
+
+                            const exerciseName = document.getElementById('exercise-name2');
+
+                            exerciseNameElement.textContent = `Exercise:`;
+                            exerciseName.textContent = `${(exercise.exercise)}`;
+                            exerciseName.style.color = '#7ED957';
                             totalTimeElement.textContent = `Total Time Remaining: ${formatTime(currentTime)}`;
                             exerciseTimerElement.textContent = `Exercise Time Remaining: ${formatTime(exercise.time)}`;
 
                             if (currentIndex + 1 < exerciseData.length) {
                                     nextExerciseNameElement.textContent = `Next Up: ${exerciseData[currentIndex + 1].exercise}`;
                                 } else {
-                                    nextExerciseNameElement.textContent = "Last One!!";
+                                    nextExerciseNameElement.textContent = "This is your last exercise!! You got this!!!!";
                                 }
                             const exerciseInterval = setInterval(function () {
-                                exercise.time--; // Decrease the time for the current exercise
-                                currentTime--; // Decrease the total time remaining
+                                exercise.time--;
+                                currentTime--;
                                 exerciseTimerElement.textContent = `Exercise Time Remaining: ${formatTime(exercise.time)}`;
                                 totalTimeElement.textContent = `Total Time Remaining: ${formatTime(currentTime)}`;
 
@@ -125,20 +143,26 @@
                                     clearInterval(exerciseInterval);
                                     currentIndex++;
                                     if (currentIndex < exerciseData.length) {
+                                        
                                         exerciseNameElement.textContent = `Exercise Done!`;
                                         totalTimeElement.textContent = `Your exercise/break is loading...Get in position!!`;
                                         setTimeout(displayExercise, 5000);
                                     } else {
-                                        // All exercises have been displayed
+                                        const elementsToHide = exerciseContainer.querySelectorAll('.exercise-text, .exercise-text2');
+
+                                        elementsToHide.forEach(element => {
+                                            if (element.id !== 'exercise-name') {
+                                                element.style.display = 'none';
+                                            }
+                                        });
                                         exerciseNameElement.textContent = "Workout complete! Great job! You are strong, resilient, and I admire the way you grind through adversity! I hope to see you soon!";
-                                        exerciseTimeElement.textContent = "";
                                     }
                                 }
-                            }, 1000); // Update timer every second
+                            }, 1000);
                         }
                     }
 
-                    displayExercise(); // Start displaying exercises
+                    displayExercise();
                 });
         }
 

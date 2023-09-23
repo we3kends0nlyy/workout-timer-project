@@ -16,7 +16,7 @@ from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.contrib import messages
 from django import forms
 from .forms import DropdownMenuForm, DropdownUpdateMinutesMenuForm, DropdownUpdateSecondsMenuForm, CheckWorkout, ChoosePrevWorkout
-from .models import Entry, ExistingEntry1, ExistingEntry2, ExistingEntry3, ExistingEntry4, ExistingEntry5, GoWorkout
+from .models import Entry, ExistingEntry1, ExistingEntry2, ExistingEntry3, ExistingEntry4, ExistingEntry5, GoWorkout, Premade1, Premade2, Premade3, Premade4, Premade5
 import sqlite3
 from django.http import JsonResponse
 from .models import Entry
@@ -102,10 +102,6 @@ class EntryForm(forms.ModelForm):
 class LockedView(LoginRequiredMixin):
     login_url = "admin:login"
 
-
-#lock the button for previous 5 workouts until there's a workout added.
-#make the home button more specific
-#
 
 class DropdownMenu(View, SuccessMessageMixin):
 
@@ -255,18 +251,22 @@ class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView):
         new_entry = form.save(commit=False)
         new_order_of_workout = new_entry.order_in_workout
         real_id = True
-        while real_id is not None:
-            with sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None) as connection:
-                connection.execute('PRAGMA foreign_keys = ON;')
-                real_id = self.find_matching_order(connection, new_order_of_workout, build_object)
-                cursor = connection.cursor()
-                cursor.execute('SELECT COUNT(*) FROM entries_entry')
-                num_of_exercises = cursor.fetchone()
-                if new_order_of_workout > num_of_exercises[0]:
-                    new_order_of_workout = num_of_exercises[0] + 1
-                    form.instance.order_in_workout = num_of_exercises[0] + 1
-                    form.save(commit=False)
-        return super().form_valid(form)
+        if new_order_of_workout < 1:
+            messages.error(self.request, "The order should be a number greater than 0.")
+            return redirect('buildworkout')
+        else:
+            while real_id is not None:
+                with sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None) as connection:
+                    connection.execute('PRAGMA foreign_keys = ON;')
+                    real_id = self.find_matching_order(connection, new_order_of_workout, build_object)
+                    cursor = connection.cursor()
+                    cursor.execute('SELECT COUNT(*) FROM entries_entry')
+                    num_of_exercises = cursor.fetchone()
+                    if new_order_of_workout > num_of_exercises[0]:
+                        new_order_of_workout = num_of_exercises[0] + 1
+                        form.instance.order_in_workout = num_of_exercises[0] + 1
+                        form.save(commit=False)
+            return super().form_valid(form)
 
     def find_matching_order(self, connection, new_order_of_workout, build_object):
         cursor = connection.cursor()
@@ -318,8 +318,6 @@ class EntryListView(ListView, View):
         return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        #form = CheckWorkout(request.POST)
-        #if form.is_valid():
         connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None)
         cursor = connection.execute('PRAGMA foreign_keys = ON;')
         connection.commit()
@@ -332,11 +330,6 @@ class EntryListView(ListView, View):
         else:
             return redirect('workout')
         
-        #return render(request, self.template_name, {'form': form})
-
-#lock the button for previous 5 workouts until there's a workout added.
-#make the home button more specific
-#
 
 class WorkoutGo(View, SuccessMessageMixin):
     model = Entry
@@ -574,3 +567,40 @@ class EntryDeleteView(LockedView, SuccessMessageMixin, DeleteView):
         EntryDeleteView.self_object = self.object
         EntryDeleteView.current_order = int(EntryDeleteView.self_object.order_in_workout) + 1
         return super().get_context_data(**kwargs)
+    
+
+class Premade(View):
+    template_name = 'entries/premade.html'
+
+    def get(self, request, *args, **kwargs):
+
+        entry_data = Entry.objects.all().order_by('order_in_workout')
+        premade1 = Premade1.objects.all().order_by('order_in_workout')
+        premade2 = Premade2.objects.all().order_by('order_in_workout')
+        premade3 = Premade3.objects.all().order_by('order_in_workout')
+        premade4 = Premade4.objects.all().order_by('order_in_workout')
+        premade5 = Premade5.objects.all().order_by('order_in_workout')
+        form = ChoosePrevWorkout()
+
+        context = {
+            'entry_data': entry_data,
+            'premade1': premade1,
+            'premade2': premade2,
+            'premade3': premade3,
+            'premade4': premade4,
+            'premade5': premade5,
+            'form': form,
+        }
+
+
+        return render(request, self.template_name, context)
+    def post(self, request, *args, **kwargs):
+        connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None)
+        form = ChoosePrevWorkout(request.POST)
+        if form.is_valid():
+            workout_choice = form.cleaned_data['workouts']
+            connection.execute('DELETE FROM entries_entry;')
+            connection.execute(f"INSERT INTO entries_entry (exercise, order_in_workout, seconds, minutes) SELECT exercise, order_in_workout, seconds, minutes FROM entries_premade{workout_choice};")
+            connection.commit()
+            return redirect('entry-list')
+        return render(request, self.template_name, {'form': form})

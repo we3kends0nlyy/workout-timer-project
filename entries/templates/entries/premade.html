@@ -3,7 +3,7 @@
 {% block content %}
 
     <article>
-        <h3 style="color: rgba(246, 246, 246, 0.885); font-family: Averia Sans Libre; margin-top: -158px; margin-left: 250px;">{{ "Select any of your previous workouts to get started quickly!" }}</h3>
+        <h3 style="color: rgba(246, 246, 246, 0.885); font-family: Averia Sans Libre; margin-top: -158px; margin-left: 410px;">{{ "Select any of your previous workouts to get started quickly!" }}</h3>
     </article>
     <article>
         <div class="choose" style="margin-left: 480px; margin-top: -70px;">
@@ -14,11 +14,10 @@
                 <button type="submit" id="load-button">Load the workout!</button>
             </form>
         </div>
-        <a href="{% url 'clear-all' %}"><button id="clear-button" style="margin-top: 30px; color: rgba(246, 246, 246, 0.885); background-color: #C85656; margin-left: 640px;">Clear past workouts</button></a>
     </article>
-            {% if existing_entry1 %}
+            {% if premade1 %}
             <h1 style="font-size: 30px; color: rgba(246, 246, 246, 0.885); font-family: Averia Sans Libre;"> Workout 1</h1>
-            {% for entry in existing_entry1 %}
+            {% for entry in premade1 %}
                 <article>
                     <h3>
                             <span class="small-font" style="font-size: 20px; color: rgba(246, 246, 246, 0.885); font-family: Averia Sans Libre;">{{ "Order in workout: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.order_in_workout }}</span>
@@ -43,9 +42,9 @@
         {% endif %}
         <br>
         <br>
-        {% if existing_entry2 %}
+        {% if premade2 %}
             <h1 style="font-size: 30px; color: rgba(246, 246, 246, 0.885); font-family: Averia Sans Libre;"> Workout 2</h1>
-            {% for entry in existing_entry2 %}
+            {% for entry in premade2 %}
                 <article>
                     <h3>
                             <span class="small-font" style="font-size: 20px; color: rgba(246, 246, 246, 0.885); font-family: Averia Sans Libre;">{{ "Order in workout: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.order_in_workout }}</span>
@@ -70,9 +69,9 @@
         {% endif %}
         <br>
         <br>
-        {% if existing_entry3 %}
+        {% if premade3 %}
             <h1 style="font-size: 30px; color: rgba(246, 246, 246, 0.885); font-family: Averia Sans Libre;"> Workout 3</h1>
-            {% for entry in existing_entry3 %}
+            {% for entry in premade3 %}
                 <article>
                     <h3>
                             <span class="small-font" style="font-size: 20px; color: rgba(246, 246, 246, 0.885); font-family: Averia Sans Libre;">{{ "Order in workout: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.order_in_workout }}</span>
@@ -97,9 +96,9 @@
         {% endif %}
         <br>
         <br>
-        {% if existing_entry4 %}
+        {% if premade4 %}
             <h1 style="font-size: 30px; color: rgba(246, 246, 246, 0.885); font-family: Averia Sans Libre;"> Workout 4</h1>
-            {% for entry in existing_entry4 %}
+            {% for entry in premade4 %}
                 <article>
                     <h3>
                             <span class="small-font" style="font-size: 20px; color:rgba(246, 246, 246, 0.885); font-family: Averia Sans Libre;">{{ "Order in workout: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.order_in_workout }}</span>
@@ -124,9 +123,9 @@
         {% endif %}
         <br>
         <br>
-        {% if existing_entry5 %}
+        {% if premade5 %}
             <h1 style="font-size: 30px; color: rgba(246, 246, 246, 0.885); font-family: Averia Sans Libre;"> Workout 5</h1>
-            {% for entry in existing_entry5 %}
+            {% for entry in premade5 %}
                 <article>
                     <h3>
                             <span class="small-font" style="font-size: 20px; color: rgba(246, 246, 246, 0.885); font-family: Averia Sans Libre;">{{ "Order in workout: "}}</span> <span class="small-font" style="font-size: 18px; color: #7ED957; font-family: Averia Sans Libre;">{{ entry.order_in_workout }}</span>

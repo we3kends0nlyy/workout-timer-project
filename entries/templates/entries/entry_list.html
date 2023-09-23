@@ -2,8 +2,9 @@
 {% block content %}
     <article>
         <div class="buttons">
-            <a href="{% url 'buildworkout' %}"><button id="add-button">Add your own exercise/break</button></a>
-            <a href="{% url 'choose-prev' %}"><button id="choose-button">Load a past workout</button></a>
+            <a href="{% url 'buildworkout' %}"><button id="add-button">Add Your Own Exercise/Break</button></a>
+            <a href="{% url 'choose-prev' %}"><button id="choose-button">Load A Past Workout</button></a>
+            <a href="{% url 'premade' %}"><button id="load-button">Load A Premade Workout</button></a>
         </div>
         <form method="post">
             {% csrf_token %}
@@ -16,7 +17,7 @@
         <ul id="exers">
             <h1 style= "font-size: 50px; color: rgba(246, 246, 246, 0.885); font-weight: bolder;">Your Workout</h1>
             {% if entry_list %}
-                <h1 style= "font-size: 15px; color: rgba(246, 246, 246, 0.885); margin-left: 530px; margin-top: -40px">Click on any element of the workout to edit it!</h1>
+                <h1 style= "font-size: 15px; color: rgba(246, 246, 246, 0.885); margin-left: 530px; margin-top: -40px">Click on any element of the workout to edit it and click on the exercise to delete it.</h1>
                 {% for entry in entry_list %}
                     <article>
                         <h3>
@@ -44,7 +45,7 @@
                     </article>
                 {% endfor %}
             {% else %}
-                <p style="color: rgba(246, 246, 246, 0.885);">Your workout is currently empty! Add your own exercises to the workout#### click on any element of the workout to edit it!</p>
+                <p style="color: rgba(246, 246, 246, 0.885);">Your workout is currently empty! Add your own exercises to the workout and click on any element of the workout to edit it once added!</p>
             {% endif %}
         </ul>
     </div>
@@ -108,7 +109,7 @@
     }
 
     #start-button:hover {
-    background-color: rgba(246, 246, 246, 0.885); /* Change the background color on hover */
+    background-color: rgba(246, 246, 246, 0.885);
     color: #7ED957;
     }
     #add-button{
@@ -132,6 +133,18 @@
     }
 
     #choose-button:hover {
+        background-color: rgba(192, 190, 190, 0.885);
+        color: #C85656;
+    }
+
+    #load-button{
+        font-size: 20px; 
+        color: #C85656; 
+        background-color: rgba(246, 246, 246, 0.885); 
+        font-family: Averia Sans Libre;
+    }
+
+    #load-button:hover {
         background-color: rgba(192, 190, 190, 0.885);
         color: #C85656;
     }

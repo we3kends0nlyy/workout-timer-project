@@ -25,8 +25,35 @@
     }
 
     #confirm-button:hover {
-    background-color: #5c804f; /* Change the background color on hover */
+    background-color: #5c804f;
     color: white;
     }
+
+    .error-message {
+        background-color: #C85656;
+        color: #7ED957;
+        padding: 10px;
+        position: fixed;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80%;
+        text-align: center;
+        z-index: 1000;
+        font-family: Averia Sans Libre;
+    }
+
+
+    .error-message p {
+        margin: 5px 0;
+    }
 </style>
+{% if messages %}
+        {% for message in messages %}
+        <div class="{% if message.tags == 'error' %}error-message{% elif message.tags == 'success' %}success-message{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+{% endif %}
+
 {% endblock %}

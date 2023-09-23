@@ -74,8 +74,6 @@ class DropdownUpdateMinutesMenuForm(forms.Form):
         cleaned_data = super().clean()
         minutes = int(cleaned_data.get('minutes', 0))
 
-        #if minutes == 0:
-            #raise ValidationError("Please choose a time greater than zero.")
 
 class CheckWorkout(forms.Form):
     exercises = forms.ChoiceField
@@ -124,3 +122,15 @@ class ChoosePrevWorkout(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
         workouts = int(cleaned_data.get('workouts', 0))
+
+
+class Premade(forms.Form):
+    workouts = forms.ChoiceField(
+        choices=[("1", "Workout 1"), ("2", "Workout 2"), ("3", "Workout 3"), ("4", "Workout 4"), ("5", "Workout 5")],
+        widget=forms.Select(attrs={'style': 'width: 210px; height: 40px; font-size: 26px; margin-left: -43px;  background-color: rgba(246, 246, 246, 0.885); color: #C85656'})
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        workouts = int(cleaned_data.get('workouts', 0))
+
