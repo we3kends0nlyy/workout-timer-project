@@ -15,7 +15,7 @@ from django.views.generic import (
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.contrib import messages
 from django import forms
-from .forms import DropdownMenuForm, DropdownUpdateMinutesMenuForm, DropdownUpdateSecondsMenuForm, CheckWorkout, ChoosePrevWorkout
+from .forms import DropdownMenuForm, DropdownUpdateMinutesMenuForm, DropdownUpdateSecondsMenuForm, CheckWorkout, ChoosePrevWorkout, PremadeForm
 from .models import Entry, ExistingEntry1, ExistingEntry2, ExistingEntry3, ExistingEntry4, ExistingEntry5, GoWorkout, Premade1, Premade2, Premade3, Premade4, Premade5
 import sqlite3
 from django.http import JsonResponse
@@ -580,7 +580,7 @@ class Premade(View):
         premade3 = Premade3.objects.all().order_by('order_in_workout')
         premade4 = Premade4.objects.all().order_by('order_in_workout')
         premade5 = Premade5.objects.all().order_by('order_in_workout')
-        form = ChoosePrevWorkout()
+        form = PremadeForm()
 
         context = {
             'entry_data': entry_data,
@@ -596,7 +596,7 @@ class Premade(View):
         return render(request, self.template_name, context)
     def post(self, request, *args, **kwargs):
         connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/db.sqlite3', isolation_level=None)
-        form = ChoosePrevWorkout(request.POST)
+        form = PremadeForm(request.POST)
         if form.is_valid():
             workout_choice = form.cleaned_data['workouts']
             connection.execute('DELETE FROM entries_entry;')

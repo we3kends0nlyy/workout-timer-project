@@ -2,7 +2,7 @@ from typing import Any, Dict
 from django import forms
 from django.core.exceptions import ValidationError
 import sqlite3
-from .models import Entry, ExistingEntry1, ExistingEntry2, ExistingEntry3, ExistingEntry4, ExistingEntry5
+from .models import Entry, ExistingEntry1, ExistingEntry2, ExistingEntry3, ExistingEntry4, ExistingEntry5, Premade1, Premade2, Premade3, Premade4, Premade5
 
 class DropdownMenuForm(forms.Form):
     seconds = forms.ChoiceField(choices=[(0, '0'),(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5'), 
@@ -74,6 +74,8 @@ class DropdownUpdateMinutesMenuForm(forms.Form):
         cleaned_data = super().clean()
         minutes = int(cleaned_data.get('minutes', 0))
 
+        #if minutes == 0:
+            #raise ValidationError("Please choose a time greater than zero.")
 
 class CheckWorkout(forms.Form):
     exercises = forms.ChoiceField
@@ -124,7 +126,7 @@ class ChoosePrevWorkout(forms.Form):
         workouts = int(cleaned_data.get('workouts', 0))
 
 
-class Premade(forms.Form):
+class PremadeForm(forms.Form):
     workouts = forms.ChoiceField(
         choices=[("1", "Workout 1"), ("2", "Workout 2"), ("3", "Workout 3"), ("4", "Workout 4"), ("5", "Workout 5")],
         widget=forms.Select(attrs={'style': 'width: 210px; height: 40px; font-size: 26px; margin-left: -43px;  background-color: rgba(246, 246, 246, 0.885); color: #C85656'})
