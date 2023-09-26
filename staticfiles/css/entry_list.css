@@ -1,0 +1,52 @@
+#add-button {
+    font-size: 25px;
+    font-family: 'Averia Sans Libre', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    margin-right: 50px;
+}
+#add-button{
+    font-size: 30px; 
+    color: #C85656; 
+    margin-right: 50px;
+    background-color: rgba(246, 246, 246, 0.885); 
+    font-family: Averia Sans Libre;
+}
+
+#edit-button:hover {
+    background-color: rgba(192, 190, 190, 0.885);
+    color: #C85656;
+}
+#choose-button {
+    font-size: 20px;
+    font-family: 'Averia Sans Libre', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+#start-button {
+    position: fixed;
+    bottom: 10px;
+    right: 5px;
+    background-color: #7ED957;
+    color: rgba(246, 246, 246, 0.885);
+    padding: 9px;
+    border: none;
+    cursor: pointer;
+}
+
+
+.buttons {
+    margin-left: 370px;
+    margin-top: -150px;
+}
+
+.workout-list {
+    position: absolute;
+    top: 250px;
+    left: 15px;
+    font-family: 'Averia Sans Libre', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+    font-size: 20px;
+    color: rgba(246, 246, 246, 0.885);
+    }
+
+
+#exers a:link {
+    text-decoration: none;
+}

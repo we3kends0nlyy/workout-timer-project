@@ -1,0 +1,35 @@
+label[for="id_exercise"] {
+    color: #C85656;
+    font-weight: bold;
+    font-family: 'Averia Sans Libre';
+}
+
+
+label[for="id_order_in_workout"] {
+    color:#C85656;
+    font-weight: bold;
+    font-family: 'Averia Sans Libre';
+}
+
+
+#hint_id_exercise {
+    color: rgb(162, 28, 28);
+    font-size: 12px;
+}
+
+
+#hint_id_order_in_workout {
+    color: rgb(239, 20, 20);
+    font-size: 12px;
+}
+
+
+.buttons-add {
+    display: inline-block;
+    margin-right: 100px;
+    margin-top: 0px;
+}
+
+#formss {
+    margin-left: 450px;
+}
