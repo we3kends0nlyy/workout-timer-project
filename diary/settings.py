@@ -28,7 +28,9 @@ SECRET_KEY = (
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# settings.py
+
+ALLOWED_HOSTS = ['build-your-own-workout-a219bb1561b4.herokuapp.com']
 
 
 # Application definition
