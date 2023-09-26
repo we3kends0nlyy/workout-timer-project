@@ -48,6 +48,12 @@
             {% endif %}
         </ul>
     </div>
+<body>
+    <p>
+        <a href="{% url 'admin:logout' %}">
+            <button id="logout-button">Logout</button>
+    </p>
+</body>
 
     {% if form.errors %}
     <div class="error-message" >
