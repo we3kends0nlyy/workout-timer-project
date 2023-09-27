@@ -15,11 +15,12 @@ from django.views.generic import (
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.contrib import messages
 from django import forms
-from .forms import DropdownMenuForm, DropdownUpdateMinutesMenuForm, DropdownUpdateSecondsMenuForm, CheckWorkout, ChoosePrevWorkout, PremadeForm
+from .forms import DropdownMenuForm, DropdownUpdateMinutesMenuForm, DropdownUpdateSecondsMenuForm, ChoosePrevWorkout, PremadeForm
 from .models import Entry, ExistingEntry1, ExistingEntry2, ExistingEntry3, ExistingEntry4, ExistingEntry5, GoWorkout, Premade1, Premade2, Premade3, Premade4, Premade5
 import sqlite3
 from django.http import JsonResponse
 from .models import Entry
+from django.db import connections
 
 
 def get_exercise_data(request):
