@@ -20,7 +20,9 @@ from .models import Entry, ExistingEntry1, ExistingEntry2, ExistingEntry3, Exist
 import sqlite3
 from django.http import JsonResponse
 from .models import Entry
-from django.db import connections
+from pathlib import Path
+
+BASE_DIR2 = Path(__file__).resolve().parent
 
 
 def get_exercise_data(request):
@@ -35,7 +37,7 @@ def get_exercise_data(request):
 
 
 def clear_all(request):
-    connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/workouts2.db', isolation_level=None)
+    connection = sqlite3.connect(BASE_DIR2 / "workouts2.db", isolation_level=None)
     connection.execute('DELETE FROM entries_entry;')
     connection.execute('DELETE FROM entries_existingentry1;')
     connection.execute('DELETE FROM entries_existingentry2;')
@@ -74,7 +76,7 @@ class ChooseWorkout(View):
 
             return render(request, self.template_name, context)
     def post(self, request, *args, **kwargs):
-        connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/workouts2.db', isolation_level=None)
+        connection = sqlite3.connect(BASE_DIR2 / "workouts2.db", isolation_level=None)
         form = ChoosePrevWorkout(request.POST)
         if form.is_valid():
             workout_choice = form.cleaned_data['workouts']
@@ -112,7 +114,7 @@ class DropdownMenu(View, SuccessMessageMixin):
 
     def get(self, request, *args, **kwargs):
         form = DropdownMenuForm()
-        connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/workouts2.db', isolation_level=None)
+        connection = sqlite3.connect(BASE_DIR2 / "workouts2.db", isolation_level=None)
         cursor = connection.execute('PRAGMA foreign_keys = ON;')
         connection.commit()
         cursor.close()
@@ -130,7 +132,7 @@ class DropdownMenu(View, SuccessMessageMixin):
             selected_option_minutes = form.cleaned_data['minutes']
 
 
-            connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/workouts2.db', isolation_level=None)
+            connection = sqlite3.connect(BASE_DIR2 / "workouts2.db", isolation_level=None)
             cursor = connection.execute('PRAGMA foreign_keys = ON;')
             connection.commit()
             cursor.close()
@@ -166,7 +168,7 @@ class DropdownUpdateMenu(View, SuccessMessageMixin):
         return self.kwargs['id']
 
     def post(self, request, *args, **kwargs):
-        connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/workouts2.db', isolation_level=None)
+        connection = sqlite3.connect(BASE_DIR2 / "workouts2.db", isolation_level=None)
         minutes = connection.execute('SELECT minutes FROM entries_entry WHERE id = :id', {'id':self.get_id(0)})
         mins = minutes.fetchone()
         connection.commit()
@@ -177,7 +179,7 @@ class DropdownUpdateMenu(View, SuccessMessageMixin):
                 messages.error(self.request, 'You cannot change seconds to 0 when minutes is already 0.')
                 return redirect('entry-list')
             else:
-                connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/workouts2.db', isolation_level=None)
+                connection = sqlite3.connect(BASE_DIR2 / "workouts2.db", isolation_level=None)
                 cursor = connection.execute('PRAGMA foreign_keys = ON;')
                 connection.commit()
                 cursor.close()
@@ -209,7 +211,7 @@ class DropdownUpdateMinutesMenu(View):
 
 
     def post(self, request, *args, **kwargs):
-        connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/workouts2.db', isolation_level=None)
+        connection = sqlite3.connect(BASE_DIR2 / "workouts2.db", isolation_level=None)
         seconds = connection.execute('SELECT seconds FROM entries_entry WHERE id = :id', {'id':self.get_id(0)})
         secs = seconds.fetchone()
         connection.commit()
@@ -220,7 +222,7 @@ class DropdownUpdateMinutesMenu(View):
                 messages.error(self.request, f"You cannot change minutes to 0 when seconds is already 0.")
                 return redirect('entry-list')
             else:
-                connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/workouts2.db', isolation_level=None)
+                connection = sqlite3.connect(BASE_DIR2 / "workouts2.db", isolation_level=None)
                 cursor = connection.execute('PRAGMA foreign_keys = ON;')
                 connection.commit()
                 cursor.close()
@@ -257,7 +259,7 @@ class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView):
             return redirect('buildworkout')
         else:
             while real_id is not None:
-                with sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/workouts2.db', isolation_level=None) as connection:
+                with sqlite3.connect(BASE_DIR2 / "workouts2.db", isolation_level=None) as connection:
                     connection.execute('PRAGMA foreign_keys = ON;')
                     real_id = self.find_matching_order(connection, new_order_of_workout, build_object)
                     cursor = connection.cursor()
@@ -311,7 +313,7 @@ class EntryListView(ListView, View):
     template_name = 'entries/entry_list.html'
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/workouts2.db', isolation_level=None)
+        connection = sqlite3.connect(BASE_DIR2 / "workouts2.db", isolation_level=None)
         isit = connection.execute('SELECT id FROM entries_entry WHERE minutes = :minutes AND seconds = :seconds;', {'minutes':0, 'seconds':0})
         id = isit.fetchone()
         if id is not None:
@@ -319,7 +321,7 @@ class EntryListView(ListView, View):
         return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/workouts2.db', isolation_level=None)
+        connection = sqlite3.connect(BASE_DIR2 / "workouts2.db", isolation_level=None)
         cursor = connection.execute('PRAGMA foreign_keys = ON;')
         connection.commit()
         cursor.close()
@@ -337,7 +339,7 @@ class WorkoutGo(View, SuccessMessageMixin):
     template_name = 'entries/workout.html'
     def get(self, request, *args, **kwargs):
         form = DropdownMenuForm()
-        connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/workouts2.db', isolation_level=None)
+        connection = sqlite3.connect(BASE_DIR2 / "workouts2.db", isolation_level=None)
         connection.execute('DELETE FROM entries_existingentry5;')
         connection.execute('INSERT INTO entries_existingentry5 (exercise, order_in_workout, seconds, minutes) SELECT exercise, order_in_workout, seconds, minutes FROM entries_existingentry4;')
         connection.execute('DELETE FROM entries_existingentry4;')
@@ -414,7 +416,7 @@ class EntryUpdateView2(LockedView, SuccessMessageMixin, UpdateView):
         real_id = True
         real_id2 = None
         while real_id is not None:
-            with sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/workouts2.db', isolation_level=None) as connection:
+            with sqlite3.connect(BASE_DIR2 / "workouts2.db", isolation_level=None) as connection:
                 connection.execute('PRAGMA foreign_keys = ON;')
                 cursor = connection.cursor()
                 cursor.execute('SELECT COUNT(*) FROM entries_entry')
@@ -544,7 +546,7 @@ class EntryDeleteView(LockedView, SuccessMessageMixin, DeleteView):
     result = True
 
     def delete(self, request, *args, **kwargs):
-        with sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/workouts2.db', isolation_level=None) as connection:
+        with sqlite3.connect(BASE_DIR2 / "workouts2.db", isolation_level=None) as connection:
             connection.execute('PRAGMA foreign_keys = ON;')
             cursor = connection.cursor()
             while EntryDeleteView.result is not None:
@@ -596,7 +598,7 @@ class Premade(View):
 
         return render(request, self.template_name, context)
     def post(self, request, *args, **kwargs):
-        connection = sqlite3.connect('/Users/we3kends0onlyy/Documents/workout-project/workouts2.db', isolation_level=None)
+        connection = sqlite3.connect(BASE_DIR2 / "workouts2.db", isolation_level=None)
         form = PremadeForm(request.POST)
         if form.is_valid():
             workout_choice = form.cleaned_data['workouts']
