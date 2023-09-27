@@ -30,7 +30,7 @@ DEBUG = True
 
 # settings.py
 
-ALLOWED_HOSTS = ['build-your-own-workout-a219bb1561b4.herokuapp.com']
+ALLOWED_HOSTS = ['build-your-own-workout-a219bb1561b4.herokuapp.com', '127.0.0.1']
 
 
 # Application definition
@@ -75,14 +75,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "diary.wsgi.application"
 
-
-# Database
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": BASE_DIR / "workouts2.db",
     }
 }
 
