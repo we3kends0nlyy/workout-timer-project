@@ -38,7 +38,6 @@ def get_exercise_data(request):
 
 def clear_all(request):
     connection = sqlite3.connect(BASE_DIR2 / "workouts2.db", isolation_level=None)
-    connection.execute('DELETE FROM entries_entry;')
     connection.execute('DELETE FROM entries_existingentry1;')
     connection.execute('DELETE FROM entries_existingentry2;')
     connection.execute('DELETE FROM entries_existingentry3;')
@@ -313,6 +312,7 @@ class EntryListView(ListView, View):
     template_name = 'entries/entry_list.html'
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        print(BASE_DIR2 / "workouts2.db")
         connection = sqlite3.connect(BASE_DIR2 / "workouts2.db", isolation_level=None)
         isit = connection.execute('SELECT id FROM entries_entry WHERE minutes = :minutes AND seconds = :seconds;', {'minutes':0, 'seconds':0})
         id = isit.fetchone()
