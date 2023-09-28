@@ -83,7 +83,7 @@
     <script>
 
         const countdownElement = document.getElementById('countdown');
-        let countdown = 4;
+        let countdown = 0;
 
 
         function updateCountdown() {
@@ -167,34 +167,53 @@
                                 } else {
                                     nextExerciseNameElement.textContent = "This is your last exercise!! You got this!!!!";
                                 }
-                            const exerciseInterval = setInterval(function () {
-                                if (!pause) {
-                                    exercise.time--;
-                                    currentTime--;
-                                    exerciseTimerElement.textContent = `Exercise Time Remaining: ${formatTime(exercise.time)}`;
-                                    totalTimeElement.textContent = `Total Time Remaining: ${formatTime(currentTime)}`;
-                                }
-
-                                if (exercise.time <= 0) {
-                                    clearInterval(exerciseInterval);
-                                    currentIndex++;
-                                    if (currentIndex < exerciseData.length) {
-                                        
-                                        exerciseNameElement.textContent = `Exercise Done!`;
-                                        totalTimeElement.textContent = `Your exercise/break is loading...Get in position!!`;
-                                        setTimeout(displayExercise, 5000);
-                                    } else {
-                                        const elementsToHide = exerciseContainer.querySelectorAll('.exercise-text, .exercise-text2');
-
-                                        elementsToHide.forEach(element => {
-                                            if (element.id !== 'exercise-name') {
-                                                element.style.display = 'none';
-                                            }
-                                        });
-                                        exerciseNameElement.textContent = "Workout complete! Great job! You are strong, resilient, and I admire the way you grind through adversity! I hope to see you soon!";
+                                const exerciseInterval = setInterval(function () {
+                                    if (!pause) {
+                                        exercise.time--;
+                                        currentTime--;
+                                        exerciseTimerElement.textContent = `Exercise Time Remaining: ${formatTime(exercise.time)}`;
+                                        totalTimeElement.textContent = `Total Time Remaining: ${formatTime(currentTime)}`;
                                     }
-                                }
-                            }, 1000);
+
+                                    if (exercise.time <= 0) {
+                                        clearInterval(exerciseInterval);
+                                        currentIndex++;
+
+                                        if (currentIndex < exerciseData.length) {
+                                            exerciseNameElement.textContent = `Exercise Done!`;
+                                            totalTimeElement.textContent = `Your exercise/break is loading... Get in position!!`;
+
+                                            const elementsToHide = exerciseContainer.querySelectorAll('.exercise-text, .exercise-text2');
+                                            let hiddenElements = [];
+
+                                            elementsToHide.forEach(element => {
+                                                if (element.id !== 'exercise-name') {
+                                                    element.style.display = 'none';
+                                                    hiddenElements.push(element);
+                                                }
+                                            });
+
+                                            setTimeout(() => {
+                                                // Show the hidden elements
+                                                hiddenElements.forEach(element => {
+                                                    element.style.display = '';
+                                                });
+                                                displayExercise();
+                                            }, 5000);
+                                        } else {
+                                            const elementsToHide = exerciseContainer.querySelectorAll('.exercise-text, .exercise-text2');
+
+                                            elementsToHide.forEach(element => {
+                                                if (element.id !== 'exercise-name') {
+                                                    element.style.display = 'none';
+                                                }
+                                            });
+
+                                            exerciseNameElement.textContent = "Workout complete! Great job! You are strong, resilient, and I admire the way you grind through adversity! I hope to see you soon!";
+                                        }
+                                    }
+                                }, 1000);
+
                         }
                     }
 
