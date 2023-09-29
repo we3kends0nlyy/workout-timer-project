@@ -5,10 +5,6 @@ from . import views
 
 urlpatterns = [
     path(
-        "admin/",
-        admin.site.urls
-    ),
-    path(
         "dropdown",
         views.DropdownMenu.as_view(),
         name="dropdown"
