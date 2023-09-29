@@ -101,9 +101,6 @@ class EntryForm(forms.ModelForm):
         }
 
 
-class LockedView(LoginRequiredMixin):
-    login_url = "admin:login"
-
 
 class DropdownMenu(View, SuccessMessageMixin):
 
@@ -237,7 +234,7 @@ class DropdownUpdateMinutesMenu(View):
 
 
 
-class BuildWorkoutCreateView(LockedView, SuccessMessageMixin, CreateView):
+class BuildWorkoutCreateView(SuccessMessageMixin, CreateView):
     model = Entry
     form_class = EntryForm
     template_name = 'buildworkout/buildworkout.html' 
@@ -358,26 +355,26 @@ class WorkoutGo(View, SuccessMessageMixin):
 
 
 
-class EntryDetailView(LockedView, DetailView):
+class EntryDetailView(DetailView):
     model = Entry
     template_name = 'entries/entry_detail.html'
 
-class EntryOrderDetailView(LockedView, DetailView):
+class EntryOrderDetailView(DetailView):
     model = Entry
     template_name = 'entries/entryorder_detail.html'
 
-class EntryTimeDetailView(LockedView, DetailView):
+class EntryTimeDetailView(DetailView):
     model = Entry
     template_name = 'entries/entrytime_detail.html'
 
-class EntryCreateView(LockedView, SuccessMessageMixin, CreateView):
+class EntryCreateView(SuccessMessageMixin, CreateView):
     model = Entry
     fields = ["exercise", "order_in_workout"]
     success_url = reverse_lazy("entry-list")
     success_message = "Your exercise was added to the workout!!"
 
 
-class EntryUpdateView(LockedView, SuccessMessageMixin, UpdateView):
+class EntryUpdateView(SuccessMessageMixin, UpdateView):
     model = Entry
     fields = ["exercise"]
     success_message = "Your exercise was updated!"
@@ -386,7 +383,7 @@ class EntryUpdateView(LockedView, SuccessMessageMixin, UpdateView):
     def get_success_url(self):
         return reverse_lazy("entry-list")
 
-class EntryUpdateView2(LockedView, SuccessMessageMixin, UpdateView):
+class EntryUpdateView2(SuccessMessageMixin, UpdateView):
     model = Entry
     fields = ["order_in_workout"]
     success_message = "Your exercise was updated!"
@@ -537,7 +534,7 @@ class EntryUpdateView2(LockedView, SuccessMessageMixin, UpdateView):
 
 
 
-class EntryDeleteView(LockedView, SuccessMessageMixin, DeleteView):
+class EntryDeleteView(SuccessMessageMixin, DeleteView):
     model = Entry
     success_url = reverse_lazy("entry-list")
     success_message = "Your exercise/break was deleted from the workout!"
